@@ -1,0 +1,149 @@
+\documentclass[tcc,baec]{unipampa}
+
+% Pacotes fundamentais
+\usepackage[T1]{fontenc}        % pacote para conj. de caracteres correto
+\usepackage[utf8]{inputenc}     % pacote para acentuação
+\usepackage{graphicx}           % pacote para importar figuras
+\usepackage{times}              % pacote para usar fonte Adobe Times
+\usepackage{mathptmx}           % pacote usar fonte Adobe Times nas fórmulas
+\usepackage{color}
+\usepackage[alf,abnt-emphasize=bf]{abntex2cite}    % pacote para usar citações abnt
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{longtable}
+\usepackage{textcomp}
+\usepackage{listings}
+\usepackage[svgnames]{xcolor}
+\usepackage{csvsimple}
+\usepackage{rotating}
+\usepackage{multirow}
+\usepackage[final]{pdfpages}
+\usepackage{booktabs} % Para tabelas mais bonitas
+
+% Macros
+\newcommand{\obso}[1]{\textcolor{blue}{#1}}
+\newcommand{\obsa}[1]{\textcolor{orange}{#1}}
+
+\begin{document}
+
+\includepdf[pages=-]{inicio.pdf}
+
+% Identificação (Imagens)
+% Mantendo as imagens originais de identificação
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{IMAGENS/identificação-supervisor-estagio-empresa.png}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{IMAGENS/identificação-orientador-estagio.png}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{IMAGENS/atividades-desenvolvidas-relatoriofinal.png}
+\end{figure}
+
+\newpage
+
+\chapter{Referencial Teórico}
+
+As bases técnicas que nortearam a execução das atividades foram a adoção de quatro pilares fundamentais: uma arquitetura de microsserviços, a aplicação dos princípios SOLID, a utilização de um Design System e diferentes linguagens e frameworks. Essa combinação permitiu a entrega de produtos e funcionalidades de forma incremental, consistente e evolutiva, conforme preconizado pelo Manifesto Ágil \cite{agile}.
+
+\section{Metodologia e Processos}
+
+\subsection{Scrum e Agilidade}
+O Scrum é um dos frameworks mais populares para a implementação de desenvolvimento ágil. Ele é projetado para que equipes possam entregar valor ao cliente de forma incremental e iterativa \cite{scrum}. A Metodologia Ágil, de forma mais ampla, é uma abordagem iterativa para o gerenciamento de projetos e desenvolvimento de software que ajuda as equipes a entregar valor aos seus clientes de forma mais rápida e eficiente.
+
+\subsection{Engenharia de Software}
+A Engenharia de Software é a aplicação de uma abordagem sistemática, disciplinada e quantificável para o desenvolvimento, operação e manutenção de software \cite{pressman}. Dentro deste contexto, o Código Limpo (\textit{Clean Code}) é uma filosofia de desenvolvimento popularizada por Robert C. Martin. A premissa é que o código deve ser escrito de forma simples, direta e legível. Suas características incluem o uso de nomes significativos para variáveis e funções, funções pequenas com responsabilidades únicas e a minimização de complexidade.
+
+\section{Arquitetura de Software}
+
+\subsection{Microsserviços e Monolitos}
+A Arquitetura de Microsserviços é um padrão onde uma aplicação complexa é composta por um conjunto de serviços pequenos e independentes, cada um responsável por uma capacidade de negócio específica e comunicando-se através de APIs \cite{microservices}. Em contraste, a Arquitetura Monolítica é o modelo tradicional, no qual uma aplicação é construída como uma única unidade coesa e indivisível, onde todos os componentes são fortemente acoplados.
+
+\subsection{Princípios SOLID}
+SOLID é um acrônimo para cinco princípios de design de software que visam tornar o código mais compreensível, flexível e manutenível \cite{cleanarch}:
+\begin{itemize}
+    \item \textbf{S} - Single Responsibility Principle (Princípio da Responsabilidade Única)
+    \item \textbf{O} - Open/Closed Principle (Princípio Aberto/Fechado)
+    \item \textbf{L} - Liskov Substitution Principle (Princípio da Substituição de Liskov)
+    \item \textbf{I} - Interface Segregation Principle (Princípio da Segregação de Interface)
+    \item \textbf{D} - Dependency Inversion Principle (Princípio da Inversão de Dependência)
+\end{itemize}
+
+\subsection{Arquitetura Limpa}
+Também concebida por Robert C. Martin, a Arquitetura Limpa (\textit{Clean Architecture}) impõe uma rigorosa separação de responsabilidades através de camadas concêntricas, onde a regra principal é a Dependência: as dependências do código-fonte só podem apontar para dentro.
+
+\subsection{Padrões de Projeto}
+Design Patterns são soluções gerais e reutilizáveis para problemas frequentes. Eles são categorizados em:
+\begin{itemize}
+    \item \textbf{Criação}: Abstraem o processo de instanciação (ex: Factory, Singleton).
+    \item \textbf{Estruturais}: Combinam classes e objetos (ex: Adapter, Decorator).
+    \item \textbf{Comportamentais}: Tratam da comunicação entre objetos (ex: Strategy, Observer).
+\end{itemize}
+
+\subsection{API Gateway}
+O API Gateway atua como um único ponto de entrada para todas as requisições de clientes, encapsulando a estrutura interna de microsserviços. Seus benefícios incluem desacoplamento, orquestração de dados e centralização de funcionalidades transversais (autenticação, logging), aderindo ao princípio de responsabilidade única.
+
+\section{Design System}
+Um Design System é a fonte única da verdade que agrupa elementos para projetar e desenvolver produtos de forma coesa \cite{designsystem}. O "Pulso", Design System da RD Saúde, materializa este conceito provendo Tokens de Design, componentes reutilizáveis e documentação, garantindo consistência e produtividade.
+
+\section{Tecnologias Web}
+
+\subsection{Node.js e Next.js}
+O Node.js é um ambiente de execução JavaScript \textit{back-end} construído sobre o motor V8, caracterizado por seu modelo de I/O não bloqueante orientado a eventos. Já o Next.js é um framework React para \textit{front-end} que oferece renderização híbrida (SSR e SSG) e roteamento baseado em arquivos.
+
+\subsection{React}
+React é uma biblioteca para construção de interfaces baseada em componentes e reatividade. Seus conceitos fundamentais incluem o Virtual DOM, gerenciamento de estados (via Hooks como \texttt{useState} e \texttt{useContext}) e roteamento em SPAs.
+
+\subsection{Ferramentas de Qualidade}
+Para garantir a qualidade, utilizam-se ferramentas como o Chrome DevTools e o Lighthouse. O Google introduziu os Web Vitals, métricas focadas na experiência do usuário, sendo os Core Web Vitals (CWV) os mais críticos:
+\begin{itemize}
+    \item \textbf{LCP} (Carregamento): Tempo para o maior conteúdo tornar-se visível.
+    \item \textbf{CLS} (Estabilidade): Quantidade de saltos de layout.
+    \item \textbf{INP} (Interatividade): Latência das interações.
+\end{itemize}
+
+\section{Desenvolvimento Mobile}
+
+\subsection{Ecossistemas Nativos}
+\begin{itemize}
+    \item \textbf{Android}: Baseado em Linux, utiliza Kotlin (recomendado) e Java. O build é gerenciado pelo Gradle.
+    \item \textbf{iOS}: Sistema proprietário da Apple, utiliza Swift (recomendado) e Objective-C. O gerenciamento de dependências ocorre via Swift Package Manager ou CocoaPods.
+\end{itemize}
+
+\subsection{React Native}
+O React Native permite desenvolvimento multiplataforma.
+
+\subsubsection{Arquitetura Legada (Bridge)}
+A comunicação entre JavaScript e Nativo ocorria via uma "Bridge" assíncrona baseada em JSON, o que gerava gargalos de serialização.
+
+\subsubsection{Nova Arquitetura (JSI, Turbo Modules, Fabric)}
+A nova arquitetura substitui a Bridge pelo JSI (JavaScript Interface), permitindo comunicação direta e síncrona (C++).
+
+\begin{table}[h]
+\centering
+\caption{Vantagens da Nova Arquitetura}
+\label{tab:nova-arquitetura}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Característica} & \textbf{Bridge Antiga} & \textbf{Nova Arquitetura} & \textbf{Vantagem} \\ \midrule
+Comunicação & JSON (Serialização) & Direta (C++) & Elimina overhead \\
+Sincronia & Assíncrona & Síncrona & Acesso instantâneo \\
+Carregamento & Tudo no início & Sob demanda & Inicialização rápida \\
+Tipagem & Implícita & Forte & Menos erros \\ \bottomrule
+\end{tabular}
+\end{table}
+
+Ferramentas como o \textit{react-native-builder-bob} e o \textit{Upgrade Helper} auxiliam na manutenção e atualização de projetos neste ecossistema.
+
+\bibliographystyle{abntex2-alf}
+\bibliography{TEXTO/TEXTO-Bibliografia}
+
+\includepdf[pages=-]{ultimar-pags.pdf}
+
+\end{document}
