@@ -59,6 +59,21 @@
 \usepackage{longtable}
 \usepackage{textcomp}
 \usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue}\bfseries,
+  stringstyle=\color{DarkGreen},
+  commentstyle=\color{gray}\itshape,
+  identifierstyle=\color{black},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  breaklines=true,
+  frame=single,
+  showstringspaces=false,
+  tabsize=2,
+  captionpos=b
+}
 \usepackage[svgnames]{xcolor}
 \usepackage{csvsimple}
 \usepackage{rotating}
@@ -75,7 +90,24 @@
 \newcommand{\obsa}[1]{\textcolor{orange}{#1}}
 %\newcommand{\obsa}[1]{}
 
+% Redefine fonte command for left-aligned sources with spacing
+\renewcommand{\fonte}[1]{\legend{{\small\raggedright\vspace{0.3em}Fonte: #1}}}
+
       
+
+% Adjust header height to accommodate the logo
+\usepackage{geometry}
+\geometry{headheight=2.5cm, headsep=0.5cm}
+
+% Redefine the page style to include the logo in the header
+\makeatletter
+\renewcommand{\ps@iiufrgs}{
+        \let\@oddfoot\@empty
+        \let\@evenfoot\@empty
+        \def\@evenhead{\hbox to \textwidth{\rlap{\small\thepage}\hfil\includegraphics[height=2cm]{../unipampa.png}\hfil}}
+        \def\@oddhead{\hbox to \textwidth{\hfil\includegraphics[height=2cm]{../unipampa.png}\hfil\llap{\small\thepage}}}
+}
+\makeatother
 
 \begin{document}
 
@@ -304,7 +336,7 @@ A partir da versão 0.68, o React Native iniciou a transição de sua arquitetur
         Tipagem & Implícita (dependente de JSON) & Tipagem Forte (via TypeScript Spec) & Reduz erros de runtime e melhora a manutenção. \\ \hline
     \end{tabular}
     \label{tab:vantagens_nova_arquitetura}
-    \source{Do próprio autor}
+    \source{Fonte: Do próprio autor}
 \end{table}
 
 \subsection{Ecossistema Nativos em Atualizações de SDKs}
