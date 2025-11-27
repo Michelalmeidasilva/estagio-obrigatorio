@@ -183,7 +183,7 @@ Para garantir a qualidade e a manutenibilidade do software, foram adotados os se
 A arquitetura do sistema evoluiu de modelos tradicionais para abordagens mais modernas e distribuídas.
 
 \begin{description}
-    \item[Arquitetura Monolítica:] Modelo tradicional onde a aplicação é uma única unidade coesa. Todos os componentes (UI, lógica, dados) são fortemente acoplados.
+    \item[Arquitetura Monolítica:] Modelo tradicional onde a aplicação é uma única unidade coesa. Todos os componentes do sitema são fortemente acoplados.
     \item[Arquitetura de Microsserviços:] Padrão onde uma aplicação complexa é composta por serviços pequenos e independentes, cada um com uma capacidade de negócio específica, comunicando-se via Interface de Programação de Aplicações (APIs) \cite{microservices}.
     \item[Computação Serverless:] Permite construir e executar aplicações sem gerenciar servidores.
     \begin{itemize}
@@ -197,9 +197,9 @@ A arquitetura do sistema evoluiu de modelos tradicionais para abordagens mais mo
 \subsection{Desenvolvimento Web}
 
 \begin{description}
-    \item[Node.js:] Ambiente de execução JavaScript assíncrono construído sobre o motor V8. Seu modelo de I/O não bloqueante o torna ideal para microsserviços e APIs de alta performance \cite{nodejs}.
-    \item[React:] Biblioteca JavaScript para construção de interfaces de usuário baseada em componentes e declarativa. Utiliza o Virtual DOM para atualizações eficientes \cite{react}. Conceitos chave incluem Componentes, Reatividade, Gerenciamento de Estados e Hooks.
-    \item[Next.js:] Framework React para produção que oferece renderização híbrida (SSR e SSG) e sistema de roteamento baseado em arquivos \cite{nextjs}.
+    \item[Node.js:] Ambiente de execução JavaScript (JS) assíncrono construído sobre o motor V8. Seu modelo de I/O não bloqueante o torna ideal para microsserviços e APIs de alta performance \cite{nodejs}.
+    \item[React:] Biblioteca JS para construção de interfaces de usuário baseada em componentes e declarativa. Utiliza o Virtual do Document Object Model (DOM) para atualizações eficientes \cite{react}. Conceitos chave incluem Componentes, Reatividade, Gerenciamento de Estados e Hooks.
+    \item[Next.js:] Framework React para produção que oferece renderização híbrida (Server Side Rendering e Static Site Generation) e sistema de roteamento baseado em arquivos \cite{nextjs}.
 \end{description}
 
 \subsection{Desenvolvimento Mobile}
@@ -207,11 +207,11 @@ A arquitetura do sistema evoluiu de modelos tradicionais para abordagens mais mo
 \begin{description}
     \item[Ecossistema Android:] Sistema operacional móvel baseado em Linux. O desenvolvimento moderno utiliza Kotlin (interoperável com Java) e o sistema de build Gradle.
     \item[Ecossistema iOS:] Sistema proprietário da Apple. O desenvolvimento utiliza Swift (sucessor do Objective-C) e gerenciamento de dependências via Swift Package Manager ou CocoaPods.
-    \item[React Native:] Framework para desenvolvimento multiplataforma usando JavaScript e React \cite{reactnative}.
+    \item[React Native:] Framework para desenvolvimento multiplataforma usando JS e React \cite{reactnative}.
     \begin{itemize}
-        \item \textbf{Arquitetura Legada (Bridge):} Baseia-se em uma comunicação assíncrona onde mensagens JSON são serializadas e enviadas através de uma "ponte" entre as threads JavaScript e Nativa. Esse processo de serialização/desserialização introduz um gargalo de performance (overhead), especialmente em aplicações que exigem alta frequência de troca de dados, como animações e gestos.
+        \item \textbf{Arquitetura Legada (Bridge):} Baseia-se em uma comunicação assíncrona onde mensagens JavaScript Object Notation  (JSON) são serializadas e enviadas através de uma ``ponte'' entre as threads JS e Nativa. Esse processo de serialização/desserialização introduz um gargalo de performance (overhead), especialmente em aplicações que exigem alta frequência de troca de dados, como animações e gestos.
 
-        \item \textbf{Nova Arquitetura} A nova arquitetura JSI (JavaScript Interface)} representa uma evolução fundamental no React Native. Diferente da arquitetura antiga, que dependia de serialização assíncrona de mensagens JSON, a JSI permite que o código JavaScript mantenha referências diretas a objetos C++ (Host Objects). Isso possibilita a invocação síncrona de métodos nativos, eliminando o overhead de serialização e permitindo o compartilhamento de memória entre os runtimes. O resultado é uma interoperabilidade mais rápida e eficiente, essencial para bibliotecas de alta performance e animações complexas A Figura \ref{fig:com_async} ilustra o processo de criação de um componente e as funções que possibilitam a comunicação entre o código React Native e os módulos nativos.
+        \item \textbf{Nova Arquitetura} A nova arquitetura JS Interface (JSI)} representa uma evolução fundamental no React Native. Diferente da arquitetura legada, que dependia de serialização assíncrona de mensagens JSON, a JSI permite que o código JS mantenha referências diretas a objetos C++ (Host Objects). Isso possibilita a invocação síncrona de métodos nativos, eliminando o overhead de serialização e permitindo o compartilhamento de memória entre os runtimes. O resultado é uma interoperabilidade mais rápida e eficiente, essencial para bibliotecas de alta performance e animações complexas. A Figura \ref{fig:com_async} ilustra o processo de criação de um componente e as funções que possibilitam a comunicação entre o código React Native e os módulos nativos.
     \end{itemize}
 
 
@@ -236,18 +236,18 @@ A arquitetura do sistema evoluiu de modelos tradicionais para abordagens mais mo
 \begin{description}
     \item[Design System:] Fonte única de verdade para design e desenvolvimento. O Design System provê tokens, componentes e documentação para garantir consistência.
     \item[Chrome DevTools:] Ferramentas de desenvolvimento embutidas no Chrome para inspeção de DOM, depuração de JS e análise de rede/performance.
-    \item[Lighthouse:] Ferramenta de auditoria automatizada que avalia Performance, Acessibilidade, Boas Práticas, SEO e PWA.
+    \item[Lighthouse:] Ferramenta de auditoria automatizada que avalia Performance, Acessibilidade, Boas Práticas e Otimização para Mecanismos de Busca (SEO).
     \item[Web Vitals:] Iniciativa do Google para métricas de qualidade de experiência do usuário.
     \begin{itemize}
-        \item \textbf{Core Web Vitals:} LCP (carregamento), CLS (estabilidade visual) e INP (interatividade).
+        \item \textbf{Core Web Vitals:} Largest Contentful Paint (LCP), Largest Contentful Paint (CLS) e Interaction to Next Paint (INP).
     \end{itemize}
 \end{description}
 
 \section{Inteligência Artificial e Agentes}
 
 \begin{description}
-    \item[Agentes Conversacionais:] Evolução do Dialogflow CX, integrando fluxos determinísticos (baseados em estados) e generativos (baseados em LLMs e Playbooks).
-    \item[RAG (Retrieval-Augmented Generation):] Técnica que otimiza respostas de LLMs usando bases de conhecimento confiáveis (Data Stores).
+    \item[Agentes Conversacionais:] Evolução do Dialogflow CX, integrando fluxos determinísticos (baseados em estados) e generativos.
+    \item[RAG (Retrieval-Augmented Generation):] Técnica que otimiza respostas de Large Language Models (LLM) usando bases de conhecimento confiáveis (Data Stores).
     \item[Model Context Protocol (MCP):] Padrão aberto para conectores seguros entre dados e ferramentas de IA.
     \item[Agent Development Kits (ADK):] Frameworks para construção de agentes autônomos.
 

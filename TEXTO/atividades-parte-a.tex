@@ -4,7 +4,7 @@
 
 \subsection{Tarefa: Design e Implementação do API Gateway e do Contrato de Comunicação entre microsserviços.}
 
-A simples criação de endpoints individuais em cada microsserviço levaria a um acoplamento forte com o front-end e a uma complexidade de gerenciamento. Aplicando os princípios de Design de Software, foi implementada uma Interface de Programação de Aplicações (API) Gateway para desacoplamento entre regras de negócios da aplicação.
+A simples criação de endpoints individuais em cada microsserviço levaria a um acoplamento forte com o front-end e a uma complexidade de gerenciamento. Aplicando os princípios de Design de Software, foi implementada uma API para desacoplamento entre regras de negócios da aplicação.
 
 \subsection{Execução Baseada em Engenharia de Software}
 \begin{itemize}
@@ -37,12 +37,12 @@ Seguindo o princípio de Separação de Responsabilidades e a filosofia da Arqui
 \subsubsection{Construção e Otimização de Performance}
 A performance foi tratada como um requisito fundamental, especialmente em interações de alta frequência.
 
-\textbf{Evento onProgress:} Este evento pode disparar múltiplas vezes por segundo, o que, se gerenciado ingenuamente com useState, causaria um excesso de re-renderização no React, sobrecarregando e resultando em uma UI "travada".
+\textbf{Evento onProgress:} Este evento pode disparar múltiplas vezes por segundo, o que, se gerenciado ingenuamente com useState, causaria um excesso de re-renderização no React, sobrecarregando e resultando em uma UI ``travada".
 
 \begin{itemize}
-    \item \textbf{Manipulação Direta do Document Object Model (DOM) para UI:} A atualização visual da barra de progresso, que precisa ser fluida, foi desacoplada do estado do React. Foi utilizado o hook useRef para obter uma referência direta ao elemento da barra e atualizar seu estilo (transform: scaleX(...)) diretamente, contornando o ciclo de renderização do React para essa animação específica.
-    \item \textbf{Throttling para o Estado React:} O estado global do React (ex: o texto "01:32 / 05:00") ainda precisava ser atualizado, mas não com a mesma frequência. Foi implementada uma função de throttle (usando a biblioteca lodash, por exemplo) para garantir que o setState fosse chamado no máximo uma vez a cada 250ms, garantindo a atualização da informação sem sobrecarregar a aplicação.
-    \item \textbf{Memoização:} Todos os sub-componentes da UI (ex: <PlayPauseButton />, <VolumeControl />) foram envolvidos em React.memo, e as funções de callback passadas como props foram estabilizadas com useCallback. Isso previne re-renderizações desnecessárias quando o estado pai muda, mas as props específicas daquele componente filho permanecem as mesmas.
+    \item \textbf{Manipulação Direta da DOM para UI:} A atualização visual da barra de progresso, que precisa ser fluida, foi desacoplada do estado do React. Foi utilizado o hook useRef para obter uma referência direta ao elemento da barra e atualizar seu estilo diretamente, contornando o ciclo de renderização do React para essa animação específica.
+    \item \textbf{Throttling para o Estado React:} O estado global do React ainda precisava ser atualizado, mas não com a mesma frequência. Foi implementada uma função de throttle para garantir que o setState fosse chamado no máximo uma vez a cada 250ms, garantindo a atualização da informação sem sobrecarregar a aplicação.
+    \item \textbf{Memoização:} Todos os sub-componentes da UI (ex: <PlayPauseButton />, <VolumeControl />) foram envolvidos em React.memo, e as funções de callback passadas como propriedades foram estabilizadas com useCallback. Isso previne re-renderizações desnecessárias quando o estado pai muda, mas as propriedades específicas daquele componente filho permanecem as mesmas.
 \end{itemize}
 
 \subsubsection{Testes Unitários do Hook useVideoPlayerState}
@@ -67,7 +67,7 @@ A qualidade e a robustez do componente foram garantidas através de testes unit�
     \noindent{\small Fonte: Do próprio autor}
 \end{table}
 
-A integração dentro das telas que fazem uso do componente foi finalizada. Esta fase envolveu a passagem das props necessárias (como a URL do vídeo) e a conexão de callbacks (como onEnded) com a lógica de negócio da página que o contém.
+A integração dentro das telas que fazem uso do componente foi finalizada. Esta fase envolveu a passagem das propriedades necessárias (como a URL do vídeo) e a conexão de callbacks (como onEnded) com a lógica de negócio da página que o contém.
 
 \section{Estudos de Viabilidade Técnica para Funcionalidades de Vídeos com interatividade}
 
@@ -129,7 +129,7 @@ Minha atuação como engenheiro foi focada em garantir que a funcionalidade não
         Validar o estado desabilitado do botão 'anterior' no início. & Renderizar o componente no estado inicial e verificar se o botão 'anterior' possui o atributo 'disabled'. \\ \hline
         Validar o estado desabilitado do botão 'próximo' no final. & Simular a navegação até o último slide e verificar se o botão 'próximo' possui o atributo 'disabled'. \\ \hline
         Testar a sincronização da UI dos indicadores de paginação. & Verificar se o indicador (dot) correspondente ao slide ativo possui uma classe CSS de 'active' e os outros não. \\ \hline
-        Validar a renderização condicional baseada em props. & Renderizar o componente com a prop 'showArrows' como 'false' e verificar se os botões de navegação não existem no DOM. \\ \hline
+        Validar a renderização condicional baseada em propriedade. & Renderizar o componente com a 'showArrows' como 'false' e verificar se os botões de navegação não existem no DOM. \\ \hline
     \end{tabular}
     \label{tab:testes_imagens}
     \vspace{0.3em}
@@ -144,7 +144,7 @@ limitações de performance. Na tabela 3 é visto uma relação entre os pontos 
 
 \subsection{Tarefa: Gerenciamento de Dependências Nativas Conflitantes e do Processo de Build}
 
-A complexidade de uma atualização do React Native está no código JavaScript, e também no ecossistema nativo subjacente. É uma tarefa de configuração dos componentes nativos, atualização de bibliotecas do React-Native e correção de builds.
+A complexidade de uma atualização do React Native está no código JS, e também no ecossistema nativo subjacente. É uma tarefa de configuração dos componentes nativos, atualização de bibliotecas do React-Native e correção de builds.
 
 
 \begin{table}[h!]
@@ -168,7 +168,7 @@ A complexidade de uma atualização do React Native está no código JavaScript,
 \begin{itemize}
     \item \textbf{Análise de Risco e Planejamento Estratégico:}
     \begin{itemize}
-        \item \textbf{Análise de Breaking Changes:} Antes de iniciar, foi utilizada a ferramenta oficial react-native-upgrade-helper. Ela fornece um diff detalhado entre as versões, mostrando todas as alterações necessárias em arquivos de template nativos e de configuração, o que foi crucial para estimar o esforço e os pontos de risco.
+        \item \textbf{Análise de Breaking Changes:} Antes de iniciar, foi utilizada a ferramenta oficial react-native-upgrade-helper. Ela fornece a diferença dos códigos detalhado entre as versões, mostrando todas as alterações necessárias em arquivos de template nativos e de configuração, o que foi crucial para estimar o esforço e os pontos de risco.
         \item \textbf{Mapeamento de Dependências:} Foi criado um inventário de todas as bibliotecas de terceiros, verificando seus changelogs e issues no GitHub para confirmar a compatibilidade com a nova versão do React Native.
         \item \textbf{Plano de Execução:} Foi definido um plano em uma branch Git isolada (feature/upgrade-rn-0.xx), que incluía um plano de rollback claro: a qualquer momento, se um impedimento intransponível fosse encontrado, a branch seria descartada, garantindo zero impacto na main branch.
     \end{itemize}

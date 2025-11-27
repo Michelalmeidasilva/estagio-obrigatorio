@@ -13,7 +13,7 @@ O desenvolvimento foi separado entre duas implementações: a Implementação A 
 
 \subsubsection{Implementação A - Arquitetura Legada}
 
-A implementação abaixo utiliza a arquitetura legada, empregando o módulo NativeModules. Na camada JavaScript da aplicação, a comunicação com o módulo nativo é estabelecida por meio da importação de NativeModules do pacote react-native.
+A implementação abaixo utiliza a arquitetura legada, empregando o módulo NativeModules. Na camada JS da aplicação, a comunicação com o módulo nativo é estabelecida por meio da importação de NativeModules do pacote react-native.
 
 
 \begin{lstlisting}[language=JavaScript, caption={App.js (Lado JS)}]
@@ -93,17 +93,17 @@ RCT_EXPORT_METHOD(getHelloWorld: (RCTPromiseResolveBlock)resolve
 
 \subsubsection{Funcionamento da Bridge:}
 \begin{itemize}
-    \item \textbf{Chamada JS:} O JavaScript chamava HelloWorldModule.getHelloWorld()
+    \item \textbf{Chamada JS:} O JS chamava HelloWorldModule.getHelloWorld()
     \item \textbf{Serialização:} O React Native serializava o nome do módulo (HelloWorldModule) e o nome do método (getHelloWorld) em uma mensagem JSON
-    \item \textbf{Comunicação:} A mensagem JSON era enviada da thread JavaScript para a thread Nativa, atravessando a Bridge
+    \item \textbf{Comunicação:} A mensagem JSON era enviada da thread JS para a thread Nativa, atravessando a Bridge
     \item \textbf{Processamento:} A thread Nativa desserializava a mensagem JSON, encontrava a classe HelloWorldModule e chamava o método correspondente
-    \item \textbf{Retorno:} O resultado era serializado e retornado via callback/promise para o JavaScript
+    \item \textbf{Retorno:} O resultado era serializado e retornado via callback/promise para o JS
 \end{itemize}
 
 \subsubsection{Implementação B - Nova arquitetura}
 No exemplo de implementação do logMessage com TurboModule, a migração demandou um arquivo de especificação (Spec) em TypeScript para definição da API, o qual serviu de base para geração do código boilerplate nativo.
 
-\textbf{Definição da Interface de API (Spec - TypeScript)}: Um arquivo de especificação define o contrato da API de forma explícita na camada javascript, da seguinte maneira:
+\textbf{Definição da Interface de API (Spec - TypeScript)}: Um arquivo de especificação define o contrato da API de forma explícita na camada JS, da seguinte maneira:
 
 \begin{lstlisting}[language=TypeScript, caption={NativeHelloWorld.ts (Spec)}]
 // /js/NativeHelloWorld.ts (A "Spec")
@@ -125,7 +125,7 @@ export default TurboModuleRegistry.getEnforcing<Spec>(
 \newpage
 \textbf{Implementação Nativa (Android - Kotlin)}
 
-Na implementação nativa, foi utilizada uma interface gerada que permitiu o acesso direto ao runtime JavaScript.
+Na implementação nativa, foi utilizada uma interface gerada que permitiu o acesso direto ao runtime JS.
 
 \begin{lstlisting}[language=Java, caption={RTNHelloWorldModule.java}]
 package com.meuapp; //RTNHelloWorldModule.java
@@ -159,9 +159,9 @@ public class RTNHelloWorldModule extends NativeHelloWorldSpec {
 
 
 \newpage
-\textbf{Código em JavaScript}
+\textbf{Código em JS}
 
-A interface de uso no JavaScript conservou estrutura similar, mas passou a acessar diretamente o módulo C++ por meio da JSI.
+A interface de uso no JS conservou estrutura similar, mas passou a acessar diretamente o módulo C++ por meio da JSI.
 
 \begin{lstlisting}[language=JavaScript, caption={App.js (Lado JS com Nova Arquitetura)}]
 // App.js (Lado JS)
@@ -224,7 +224,7 @@ RCT_EXPORT_MODULE(RTNHelloWorld)
 /*
    NOTA: O Codegen e o template de TurboModule cuidam de
    todo o "encanamento" C++ (JSI) para que este método
-   possa ser chamado diretamente pelo JavaScript.
+   possa ser chamado diretamente pelo JS.
 */
 
 @end
@@ -241,7 +241,7 @@ Esta etapa foi a aplicação direta da estratégia de mitigação de risco para 
 \begin{itemize}
     \item A correta compilação do código nativo (Kotlin/Swift).
     \item A vinculação bem-sucedida do TurboModule através da JSI.
-    \item A execução da funcionalidade central, confirmando que a comunicação entre a camada JavaScript e as novas implementações nativas estava ocorrendo conforme a especificação da API.
+    \item A execução da funcionalidade central, confirmando que a comunicação entre a camada JS e as novas implementações nativas estava ocorrendo conforme a especificação da API.
 \end{itemize}
 
 \subsection{Publicação de nova versão da biblioteca}
@@ -253,23 +253,23 @@ Após a validação funcional no ambiente isolado, a biblioteca precisou ser dis
 
 \textbf{Processo:} O build de distribuição da biblioteca foi gerado (compilando o TypeScript e preparando os artefatos nativos via react-native-builder-bob). O pacote foi então publicado em um registro de pacotes privados (NPM privado), garantindo que a nova versão estivesse acessível para o pipeline de Integração Contínua e Entrega Contínua (CI/CD) do aplicativo principal.
 
-\subsection{Testes em ambiente de homologação (QA)}
+\subsection{Testes em ambiente de homologação}
 Este foi o primeiro nível de integração real, onde a correção encontrou o ecossistema completo do aplicativo.
 
-\textbf{Descrição:} O ambiente de homologação (QA) simula a infraestrutura de produção, mas com dados controlados e isolados, destinado à validação pela equipe de Garantia de Qualidade (QA).
+\textbf{Descrição:} O ambiente de homologação  simula a infraestrutura de produção, mas com dados controlados e isolados, destinado à validação pela equipe de Garantia de Qualidade (QA).
 
 \textbf{Execução:} O aplicativo principal foi atualizado para consumir a nova versão da biblioteca recém-publicada. Um novo build do aplicativo foi gerado e distribuído para a equipe de QA.
 
 \textbf{Validação:} A equipe de QA executou um plano de testes de regressão completo, focado não apenas na funcionalidade corrigida, mas também em áreas adjacentes. O objetivo foi garantir que (A) a correção funcionava conforme o esperado dentro do app complexo e (B) a atualização não introduziu efeitos colaterais (regressões) em outras partes do sistema.
 
-\subsection{Testes em ambientes pré-produtivos (UAT/Staging)}
+\subsection{Testes em ambientes pré-produtivos}
 Esta etapa representou o ``ensaio geral'' antes da produção.
 
-\textbf{Descrição:} O ambiente de Pré-Produção (ou Staging) é um espelho fiel do ambiente de Produção, utilizando a mesma infraestrutura e, idealmente, uma réplica recente (e anonimizada) do banco de dados produtivo.
+\textbf{Descrição:} O ambiente de Pré-Produção é um espelho fiel do ambiente de Produção, utilizando a mesma infraestrutura e, idealmente, uma réplica recente (e anonimizada) do banco de dados produtivo.
 
-\textbf{Execução:} O build aprovado em Homologação (QA) foi promovido para este ambiente.
+\textbf{Execução:} O build aprovado em Homologação foi promovido para este ambiente.
 
-\textbf{Validação:} Aqui ocorreu a validação final de aceitação (UAT - User Acceptance Testing) por parte dos stakeholders ou Product Owners. Além dos testes funcionais, foram avaliados aspectos não-funcionais, como a performance da comunicação JSI sob carga e a interação com serviços de backend reais. Esta foi a última verificação de segurança antes da exposição aos usuários finais.
+\textbf{Validação:} Aqui ocorreu a validação final de aceitação por parte dos stakeholders e Product Owners. Além dos testes funcionais, foram avaliados aspectos não-funcionais, como a performance da comunicação JSI sob carga e a interação com serviços de backend reais. Esta foi a última verificação de segurança antes da exposição aos usuários finais.
 
 \subsection{Deploy para ambiente produtivo}
 A etapa final do pipeline, disponibilizando a correção para todos os usuários.
@@ -282,7 +282,7 @@ A etapa final do pipeline, disponibilizando a correção para todos os usuários
 
 \section{Migração do react-native 0.71.5 para a 0.81.4 (Período: 16/10 a 31/10)}
 
-O módulo nativo, empacotado originalmente com o react-native-builder-bob, tornou-se obsoleto e causava erro de renderização dos componentes de layout após o upgrade do React Native. Utilizando o boilerplate e as ferramentas de linking do react-native-builder-bob, foram reconfigurados os wrappers nativos. Este processo exigiu a criação de um arquivo de especificação TypeScript (.d.ts), que define formalmente a interface do módulo, garantindo a tipagem estática. Em seguida, foi adaptado os entry points nativos (em Kotlin para Android e Swift para iOS) para implementar a interface gerada pelo JSI, o que assegurou a comunicação síncrona, tipada e de alta performance entre o JavaScript e o código nativo. O upgrade do React Native da versão 0.71.5 para a 0.81.4 envolveu diversas mudanças estruturais, de dependências e de configuração. Na \autoref{tab:mudancas-rn-versao} está um resumo das principais alterações realizadas, conforme o relatório do Upgrade Helper.
+O módulo nativo, empacotado originalmente com o react-native-builder-bob, tornou-se obsoleto e causava erro de renderização dos componentes de layout após o upgrade do React Native. Utilizando o boilerplate e as ferramentas de linking do react-native-builder-bob, foram reconfigurados os wrappers nativos. Este processo exigiu a criação de um arquivo de especificação TypeScript (.d.ts), que define formalmente a interface do módulo, garantindo a tipagem estática. Em seguida, foi adaptado os entry points nativos (em Kotlin para Android e Swift para iOS) para implementar a interface gerada pelo JSI, o que assegurou a comunicação síncrona, tipada e de alta performance entre o JS e o código nativo. O upgrade do React Native da versão 0.71.5 para a 0.81.4 envolveu diversas mudanças estruturais, de dependências e de configuração. Na \autoref{tab:mudancas-rn-versao} está um resumo das principais alterações realizadas, conforme o relatório do Upgrade Helper.
 
 \begin{table}[h!]
     \centering
@@ -366,7 +366,7 @@ npx @rnx-kit/align-deps --requirements react-native@0.81.4
 \subsection{Publicação de nova versão da biblioteca}
 Após a validação no ambiente isolado, o módulo reconfigurado foi versionado (seguindo o Versionamento Semântico) e empacotado, tornando a nova versão corrigida disponível para ser consumida pelo pipeline de CI/CD do aplicativo principal.
 
-\subsection{Testes em ambiente de homologação (QA)}
+\subsection{Testes em ambiente de homologação }
 Nesta etapa, o aplicativo principal (agora migrado para a versão 0.81.4 do React Native) teve sua dependência atualizada para a nova versão da biblioteca. Um build foi gerado e disponibilizado para a equipe de QA. O escopo dos testes foi duplo:
 \begin{itemize}
     \item \textbf{Teste de Correção:} Validar especificamente que o erro de renderização do componente de layout foi resolvido.
@@ -412,8 +412,8 @@ Devido às dificuldades no processo de build do projeto principal, a validação
 \subsection{Publicação de nova versão da biblioteca}
 Com a correção validada no ``sample app'', a biblioteca foi preparada para distribuição interna. O versionamento semântico foi aplicado (ex: incremento de patch ou minor), e o pacote foi publicado no registro privado (Artifactory/NPM). Esta nova versão continha as alterações de configuração nativa (build.gradle e Podfile) e o código Swift adaptado, pronta para ser consumida pelo aplicativo principal.
 
-\subsection{Testes em ambiente de homologação (QA)}
-A nova versão da biblioteca foi atualizada no aplicativo principal e um build foi gerado para o ambiente de QA. A equipe de qualidade executou um plano de testes de regressão focado:
+\subsection{Testes em ambiente de homologação }
+A nova versão da biblioteca foi atualizada no aplicativo principal e um build foi gerado para o ambiente de homologação. A equipe de qualidade executou um plano de testes de regressão focado:
 \begin{itemize}
     \item \textbf{Validação da Correção:} Garantir que a funcionalidade do módulo estava operacional.
     \item \textbf{Validação de Coexistência (Risco do Gradle):} O teste mais crítico foi verificar se a estratégia de forçar o Google SDK v12 não introduziu efeitos colaterais ou quebrou outros módulos que pudessem depender de sub-versões diferentes dos serviços do Google.
@@ -421,7 +421,7 @@ A nova versão da biblioteca foi atualizada no aplicativo principal e um build f
 Ambos os dois testes acima foram validados e passados com sucesso.
 
 \subsection{Testes em ambientes pré-produtivos (Staging)}
-O build aprovado em QA foi promovido ao ambiente de Staging, um espelho do ambiente de produção. Esta etapa validou a interação da aplicação com os serviços reais do Google (autenticação, mapas, etc., dependendo do SDK) utilizando as novas APIs v12. O objetivo foi garantir que a atualização de segurança e compatibilidade funcionava corretamente em um cenário de uso real antes da exposição ao cliente.
+O build aprovado em ambiente de homologação foi promovido ao ambiente de Staging, um espelho do ambiente de produção. Esta etapa validou a interação da aplicação com os serviços reais do Google (autenticação, mapas, etc., dependendo do SDK) utilizando as novas APIs v12. O objetivo foi garantir que a atualização de segurança e compatibilidade funcionava corretamente em um cenário de uso real antes da exposição ao cliente.
 
 \subsection{Deploy para ambiente produtivo}
 Dada a natureza da mudança (atualização de segurança e correção de breaking changes), o deploy foi tratado com monitoramento intensivo. Foi utilizado um Staged Rollout (lançamento em fases) via Play Store e App Store. A versão foi liberada inicialmente para 1\% dos usuários, com acompanhamento em tempo real das ferramentas de relatório de falhas (Crashlytics). Após a confirmação da estabilidade (ausência de novas falhas nativas relacionadas ao Google SDK), a distribuição foi escalonada para 100\%.
@@ -504,7 +504,7 @@ A publicação da nova versão foi concluída.
 As seguintes etapas foram executadas:
 \begin{enumerate}
     \item Publicação de uma versão
-    \item Testes em ambiente de homologação (QA)
-    \item Testes em ambientes pré-produtivos (pré-produção)
+    \item Testes em ambiente de homologação
+    \item Testes em ambientes pré-produtivos
     \item Deploy para ambiente produtivo
 \end{enumerate}

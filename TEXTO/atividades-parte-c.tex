@@ -1,7 +1,7 @@
 \section{Estudo de Agentes Conversacionais: Fluxos Determinísticos (Período: 01/11 a 15/11)}
 
 \subsection{Contextualização da tarefa}
-Esta tarefa teve como objetivo um estudo para compreender os fundamentos de \textit{Conversational Agents}, focando especificamente em fluxos deterministicos. Os estudos envolveu o aprendizado de como estruturar conversas rígidas e controladas usando Máquinas de Estados Finitos (FSM).
+Esta tarefa teve como objetivo um estudo para compreender os fundamentos de \textit{Conversational Agents}, focando especificamente em fluxos deterministicos. Os estudos envolveu o aprendizado de como estruturar conversas rígidas e controladas usando FSM.
 
 \subsection{Objetivos de Aprendizado} Desenvolver competências em design de fluxos determinísticos (\textit{Flows}) para processos que exigem alta confiabilidade e auditabilidade.
 
@@ -118,77 +118,15 @@ O estudo explorou como tomar decisões arquiteturais baseadas em análise de ris
 
 \subsection{Fundamentação Teórica e Prática}
 
-\subsubsection{Pesquisa sobre Matriz de Decisão por Risco}
+\subsubsection{Pesquisa sobre Paradigmas}
 Estudei metodologias para classificar funcionalidades por nível de risco e determinar qual paradigma aplicar em cada caso:
 
-\begin{table}[h!]
-    \centering
-    \caption{Matriz de Decisão: Paradigma por Nível de Risco}
-    \begin{tabular}{l|l|l}
-        \hline
-        \textbf{Funcionalidade} & \textbf{Nível de Risco} & \textbf{Paradigma Adotado} \\ \hline
-        Transferência PIX & Alto (Transacional) & Determinístico (Flows) \\ \hline
-        Pagamento de Boleto & Alto (Transacional) & Determinístico (Flows) \\ \hline
-        Consulta de Saldo & Médio (Informacional) & Determinístico (API Direta) \\ \hline
-        Explicação de Termos Financeiros & Baixo (Educacional) & Generativo (Playbooks) \\ \hline
-        Sugestões de Investimento & Médio (Consultivo) & Híbrido (Generators) \\ \hline
-    \end{tabular}
-    \vspace{0.3em}
-    \noindent{\small Fonte: Do próprio autor}
-\end{table}
+\begin{itemize}
+    \item \textbf{Paradigma Determinístico:} Aplicado tanto em operações de alto risco (PIX e Boletos, via \textit{Flows}) quanto em consultas de saldo de médio risco (via \textit{API} Direta).
+    \item \textbf{Paradigma Híbrido:} Utilizado para funcionalidades consultivas de médio risco, como sugestões de investimento.
+    \item \textbf{Paradigma Generativo:} Destinado a interações educacionais de baixo risco, como a explicação de termos financeiros.
+\end{itemize}
 
-\subsubsection{Implementação do Fluxo Determinístico (PIX)}
-Para operações de alto risco, implementei um fluxo rígido e sequencial usando \textit{Deterministic Flows}:
-
-\begin{enumerate}
-    \item \textbf{Coleta de Chave PIX:} Validação de formato (CPF, e-mail, telefone, chave aleatória).
-    \item \textbf{Coleta de Valor:} Validação de saldo disponível via webhook.
-    \item \textbf{Autenticação:} Solicitação de senha ou biometria (integração com sistema de segurança).
-    \item \textbf{Confirmação:} Exibição de resumo completo da transação.
-    \item \textbf{Execução:} Chamada ao webhook para efetivar a transferência.
-    \item \textbf{Comprovante:} Geração e envio do comprovante em PDF.
-\end{enumerate}
-
-Cada etapa possui validação rigorosa e não permite saltos, garantindo auditabilidade e conformidade regulatória.
-
-\subsubsection{Implementação do Fluxo Generativo (Explicações)}
-Para consultas de baixo risco, integrei o Vertex AI para gerar respostas contextualizadas:
-
-\textbf{Exemplo de Interação:}
-
-\textit{Usuário:} "O que é esse CDB que apareceu na minha conta?"
-
-\textit{Sistema:} Detecta a intent \texttt{explicar\_termo\_financeiro} e extrai a entidade \texttt{@termo}: "CDB".
-
-\textbf{Prompt Engineering para o Vertex AI:}
-
-\begin{lstlisting}[language=text, caption={Template de Prompt para Explicações Financeiras}]
-Você é um assistente bancario educado e didatico.
-Explique o termo financeiro "{termo}" de forma clara e acessivel.
-Use uma linguagem simples, evite jargoes tecnicos.
-Limite a resposta a 3 paragrafos.
-Contexto do usuario: Cliente pessoa fisica com conta corrente.
-
-Termo: {CDB}
-\end{lstlisting}
-
-\textit{Resposta Gerada:} "CDB significa Certificado de Depósito Bancário. É uma forma de investimento onde você empresta dinheiro ao banco por um período determinado, e em troca, recebe juros. É considerado um investimento seguro, pois é garantido pelo Fundo Garantidor de Créditos (FGC) até R\$ 250 mil por CPF e instituição."
-
-\subsubsection{Implementação do Hand-off Híbrido}
-A praticidade do sistema híbrido está na transição inteligente entre paradigmas.
-
-\textbf{Cenário:} Usuário diz: \textit{"Explica o CDB e investe 100 reais nele"}.
-
-\textbf{Processamento:}
-
-\begin{enumerate}
-    \item O Dialogflow CX detecta duas intenções na mesma frase: \texttt{explicar\_termo} e \texttt{investir}.
-    \item \textbf{Primeira Ação (Generativa):} O Vertex AI gera a explicação sobre CDB.
-    \item \textbf{Transição (Hand-off):} Após a explicação, o sistema detecta a intenção de investimento e faz a transição para o fluxo determinístico.
-    \item \textbf{Segunda Ação (Determinística):} O fluxo de investimento é iniciado, solicitando confirmação do valor (R\$ 100), prazo desejado e senha de autorização.
-\end{enumerate}
-
-Esta arquitetura combina a flexibilidade da IA generativa com a segurança de fluxos transacionais auditáveis.
 
 \subsubsection{Competências Desenvolvidas}
 Ao final deste estudo, foram desenvolvidas as seguintes competências:
