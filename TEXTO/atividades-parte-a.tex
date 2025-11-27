@@ -72,7 +72,8 @@ A qualidade e a robustez do componente foram garantidas através de testes unit�
         Verificar se a ação de mutar/desmutar o áudio funciona. & Chamar toggleMute deve alterar o estado isMuted de false para true, e vice-versa. \\ \hline
     \end{tabular}
     \label{tab:testes_video}
-    \source{Fonte: Do próprio autor}
+    \vspace{0.3em}
+    \noindent{\small Fonte: Do próprio autor}
 \end{table}
 
 \textbf{Tarefa ainda não finalizada:} Necessário a integração dentro das telas que farão o uso do componente. Esta próxima fase envolverá a passagem das props necessárias (como a URL do vídeo) e a conexão de callbacks (como onEnded) com a lógica de negócio da página que o contém.
@@ -101,7 +102,7 @@ Foco total em refatoração segura e melhoria da qualidade de um módulo crític
 \subsection{Atuação em Tarefas}
 \textbf{Tarefa: Garantia de Qualidade e Prevenção de Regressão em Código Legado Crítico.}
 
-Modificar um código complexo em um sistema legado e monolítico, sem testes e com alto impacto no negócio (cálculo de preços), sendo uma tarefa de risco, a prioridade absoluta foi garantir que o comportamento existente não fosse quebrado.
+Foi modificado um código complexo em um sistema legado e monolítico, sem testes e com alto impacto no negócio (cálculo de preços), sendo uma tarefa de risco, a prioridade absoluta foi garantir que o comportamento existente não fosse quebrado.
 
 \subsection{Execução Baseada em Engenharia de Software}
 \begin{itemize}
@@ -152,7 +153,8 @@ Minha atuação como engenheiro foi focada em garantir que a funcionalidade não
         Validar a renderização condicional baseada em props. & Renderizar o componente com a prop 'showArrows' como 'false' e verificar se os botões de navegação não existem no DOM. \\ \hline
     \end{tabular}
     \label{tab:testes_imagens}
-    \source{Fonte: Do próprio autor}
+    \vspace{0.3em}
+    \noindent{\small Fonte: Do próprio autor}
 \end{table}
 
 \section{Atualização da versão do React Native (Período: 25/09 a 15/10)}
@@ -189,7 +191,8 @@ A complexidade de uma atualização do React Native está no código JavaScript,
         Depreciação de APIs Core & A nova versão removeu alguns componentes e APIs do core do React Native, movendo-os para pacotes da comunidade (ex: react-native-community). & Instalação da nova dependência (@react-native-clipboard/clipboard), garantindo que nenhuma ocorrência fosse esquecida. \\ \hline
     \end{tabular}
     \label{tab:alteracoes_rn}
-    \source{Fonte: Do próprio autor}
+    \vspace{0.3em}
+    \noindent{\small Fonte: Do próprio autor}
 \end{table}
 
 \begin{table}[h!]
@@ -203,5 +206,6 @@ A complexidade de uma atualização do React Native está no código JavaScript,
         Regressão de Performance & Flipper, Perfetto, Xcode Instruments & Medir o tempo de inicialização (TTO) e o uso de memória em repouso. Comparar os resultados com a baseline da versão 0.76. \\ \hline
     \end{tabular}
     \label{tab:testes_rn}
-    \source{Fonte: Do próprio autor}
+    \vspace{0.3em}
+    \noindent{\small Fonte: Do próprio autor}
 \end{table}
