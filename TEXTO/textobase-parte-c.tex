@@ -1,0 +1,127 @@
+Módulo 1: Dialogflow CX (A Lógica Determinística)
+Cenário: Agendamento de Consultas Médicas. Onde se aplica: Quando o processo é rígido e não pode haver erro.
+
+Exemplo de Intent (Intenção):
+
+Frases de Treinamento: "Quero marcar um cardiologista", "Preciso de uma consulta para amanhã", "Tem vaga para doutor Paulo?".
+
+O que acontece: O Dialogflow mapeia essas frases para a intenção agendar_consulta.
+
+Exemplo de Entidades (Entities):
+
+O usuário diz: "Quero ir na unidade Centro na sexta-feira".
+
+O Dialogflow extrai:
+
+@unidade: "Centro"
+
+@sys.date: "2023-10-27" (Converte "sexta-feira" para data ISO automaticamente).
+
+Exemplo de State Machine (Pages):
+
+Página "Coleta de Dados": O bot fica em loop perguntando "Qual o horário?" até que a variável $session.params.horario seja preenchida (Slot Filling).
+
+Rota (Route): Se $session.params.status = "CONFIRMADO", transita para a Página "Fim".
+
+Módulo 1.5: Paradigmas (Híbrido)
+Cenário: Assistente Bancário. Onde se aplica: Misturar segurança transacional com facilidade de uso.
+
+Uso Determinístico (Risco Alto):
+
+Fluxo: Transferência PIX.
+
+Por que: Você não quer que uma IA Generativa "improvise" ao perguntar o valor da transferência. O fluxo deve ser exato: Chave -> Valor -> Senha -> Comprovante.
+
+Uso Generativo (Baixo Risco):
+
+Fluxo: Explicação de Termos.
+
+Pergunta: "O que é esse CDB que apareceu na minha conta?"
+
+Ação: O modelo (Vertex AI) gera uma explicação didática baseada no contexto financeiro, sem iniciar nenhuma transação.
+
+A "Mágica" Híbrida:
+
+O usuário diz: "Explica o CDB e investe 100 reais nele".
+
+O Bot usa Generativo para explicar o CDB.
+
+O Bot detecta a intenção de investimento e faz o Hand-off para o fluxo Determinístico que pede a senha.
+
+Módulo 2: GCP Cloud Functions (O Backend)
+Cenário: Rastreamento de Encomendas (Logística). Onde se aplica: Conectar o bot aos sistemas da empresa (APIs/Bancos de Dados).
+
+O Gatilho: No Dialogflow, o usuário informa o código "BR12345". O Dialogflow dispara o Webhook para sua URL da Cloud Function.
+
+O Código (Conceitual Node.js):
+
+JavaScript
+
+exports.dialogflowWebhook = async (req, res) => {
+  // 1. Extrair o parametro que o Dialogflow enviou
+  const trackingCode = req.body.sessionInfo.parameters.codigo_rastreio;
+
+  // 2. Lógica de Negócio: Consultar API da Transportadora
+  const status = await shippingApi.getStatus(trackingCode); 
+  // Retorno da API: { local: "Curitiba", previsao: "2 dias" }
+
+  // 3. Montar a resposta para o Dialogflow
+  res.json({
+    fulfillmentResponse: {
+      messages: [{
+        text: { 
+          text: [`Sua encomenda está em ${status.local}. Chega em ${status.previsao}.`] 
+        }
+      }]
+    }
+  });
+};
+Módulo 3: WhatsApp & Gupshup (A Interface)
+Cenário: E-commerce de Sapatos. Onde se aplica: Melhorar a UX limitada do WhatsApp.
+
+Problema: O usuário quer ver modelos de tênis. Se o bot responder com texto puro ("Temos Nike, Adidas, Puma..."), fica feio e difícil de ler.
+
+Solução (Custom Payload): Você monta um JSON específico que a Gupshup entende para renderizar uma Lista Interativa.
+
+Exemplo de JSON (Enviado pelo Dialogflow -> Gupshup):
+
+JSON
+
+{
+  "type": "list",
+  "body": "Escolha sua marca preferida:",
+  "action": {
+    "button": "Ver Marcas",
+    "sections": [
+      {
+        "title": "Esportivos",
+        "rows": [
+          { "id": "nike_selection", "title": "Nike Air" },
+          { "id": "adidas_selection", "title": "Adidas Ultraboost" }
+        ]
+      }
+    ]
+  }
+}
+Resultado: No WhatsApp, o usuário vê um botão "Ver Marcas", que abre um menu nativo elegante.
+
+Módulo 4: Vertex AI & RAG (A Inteligência)
+Cenário: RH / Helpdesk Interno. Onde se aplica: Responder perguntas baseadas em documentos longos (PDFs) sem precisar criar centenas de intents manuais.
+
+O Documento: Um PDF de 50 páginas chamado "Normas da Empresa 2024".
+
+A Pergunta do Usuário: "Posso vir de bermuda na sexta-feira?"
+
+Nota: Não existe uma Intent criada para "bermuda". O Dialogflow tradicional falharia.
+
+Ação do Vertex AI (Search & Conversation):
+
+Recebe a pergunta.
+
+Busca no PDF (via vetores) o trecho que fala sobre "Código de Vestimenta".
+
+Encontra o parágrafo: "Às sextas-feiras, o traje casual é permitido, incluindo bermudas jeans..."
+
+Gera a Resposta: "Sim, de acordo com as normas de vestimenta, o uso de bermudas jeans é permitido às sextas-feiras."
+
+Citação: Adiciona um link para a página 12 do PDF.

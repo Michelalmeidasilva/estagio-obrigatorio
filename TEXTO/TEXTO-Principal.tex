@@ -379,11 +379,55 @@ O API Gateway é um padrão de arquitetura que atua como um único ponto de entr
 
 
 
+\section{Agentes Conversacionais (Conversational Agents)}
+A plataforma anteriormente conhecida como Dialogflow CX evoluiu para o ecossistema de \textit{Conversational Agents} da Google Cloud, integrando capacidades determinísticas e generativas.
+
+\subsection{Paradigmas de Desenvolvimento}
+A documentação oficial da Google classifica os agentes em três categorias principais baseadas no nível de controle e uso de IA Generativa:
+
+\begin{itemize}
+    \item \textbf{Fluxos Determinísticos (Deterministic Flows):} Baseados em Máquinas de Estados Finitas (FSM). Oferecem controle total sobre a conversa através de \textit{Pages} (Estados), \textit{Routes} (Transições) e \textit{Intents}. São ideais para processos estruturados que exigem precisão e consistência.
+    \item \textbf{Totalmente Generativos (Fully Generative):} Utilizam \textit{Playbooks}, que são instruções em linguagem natural passadas a um Grande Modelo de Linguagem (LLM). O modelo decide dinamicamente o fluxo da conversa e gera as respostas, dispensando a criação manual de grafos de estados complexos.
+    \item \textbf{Fluxos Parcialmente Generativos (Partly Generative Flows):} Combinam a estrutura rígida dos fluxos com recursos generativos pontuais, como \textit{Generators} (para gerar respostas flexíveis em momentos específicos) e \textit{Generative Fallback} (para lidar com inputs não previstos).
+\end{itemize}
+
+\subsection{Componentes da Arquitetura}
+\begin{itemize}
+    \item \textbf{Pages e Flows:} Blocos de construção para controle explícito da conversa.
+    \item \textbf{Playbooks:} Módulos generativos orientados a objetivos (ex: "Ajudar o usuário a resetar a senha").
+    \item \textbf{Data Stores:} Abstração que conecta o agente a fontes de dados (sites, documentos, BigQuery) para funcionalidades de RAG (Retrieval-Augmented Generation).
+\end{itemize}
+
+\section{Computação Serverless e Integração}
+A computação serverless permite que desenvolvedores construam e executem aplicações sem gerenciar servidores.
+
+\subsection{Cloud Functions}
+São funções de propósito único, orientadas a eventos, que escalam automaticamente. No contexto de chatbots, atuam como \textit{fulfillment}, conectando a intenção do usuário a sistemas de backend (bancos de dados, APIs de terceiros).
+
+\section{Retrieval-Augmented Generation (RAG) e Data Stores}
+RAG é uma técnica que otimiza a saída de um LLM referenciando uma base de conhecimento confiável. No ecossistema Google Cloud, isso é implementado através de \textit{Data Stores} no Vertex AI Agent Builder.
+\begin{itemize}
+    \item \textbf{Ingestão:} Documentos e URLs são indexados em um \textit{Data Store}.
+    \item \textbf{Recuperação (Retrieval):} O agente busca trechos relevantes baseados na query do usuário.
+    \item \textbf{Geração:} O LLM utiliza o conteúdo recuperado para formular uma resposta fundamentada.
+\end{itemize}
+
+\section{Agentes Autônomos e Padronização}
+A nova fronteira da IA envolve agentes que não apenas respondem, mas agem no mundo digital.
+
+\subsection{Model Context Protocol (MCP)}
+O MCP é um padrão aberto que permite aos desenvolvedores construir conectores seguros e bidirecionais entre suas fontes de dados e ferramentas baseadas em IA. Ele resolve o problema "Muitos Modelos, Muitas Ferramentas" padronizando a interface de descoberta e execução de ferramentas.
+
+\subsection{Agent Development Kits (ADK)}
+Frameworks que fornecem abstrações para construção de agentes, gerenciando memória, planejamento (chain-of-thought) e uso de ferramentas, permitindo a criação de assistentes que perseguem objetivos complexos de forma autônoma.
+
 \input{TEXTO/atividades-parte-a}
 
 
 
 \input{TEXTO/atividades-parte-b}
+
+\input{TEXTO/atividades-parte-c}
 
 
 
