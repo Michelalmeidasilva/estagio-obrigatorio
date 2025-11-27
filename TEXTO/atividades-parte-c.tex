@@ -1,7 +1,7 @@
 \section{Estudo de Agentes Conversacionais: Fluxos Determinísticos (Período: 01/11 a 15/11)}
 
 \subsection{Contextualização da tarefa}
-Esta tarefa teve como objetivo um estudo para compreender os fundamentos de \textit{Conversational Agents}, focando especificamente em fluxos deterministicos. Os estudos envolveu o aprendizado de como estruturar conversas rígidas e controladas usando Máquinas de Estados Finitas (FSM).
+Esta tarefa teve como objetivo um estudo para compreender os fundamentos de \textit{Conversational Agents}, focando especificamente em fluxos deterministicos. Os estudos envolveu o aprendizado de como estruturar conversas rígidas e controladas usando Máquinas de Estados Finitos (FSM).
 
 \subsection{Objetivos de Aprendizado} Desenvolver competências em design de fluxos determinísticos (\textit{Flows}) para processos que exigem alta confiabilidade e auditabilidade.
 
@@ -9,7 +9,7 @@ O estudo focou em compreender como garantir que cada etapa de um fluxo conversac
 
 \subsection{Fundamentação Teórica e Prática}
 
-\subsubsection{Pesquisa sobre Máquinas de Estados Finitas}
+\subsubsection{Pesquisa sobre FSM}
 A primeira etapa do estudo consistiu em pesquisar e compreender o conceito de FSM aplicado a chatbots. Estudei como traduzir processos de negócio em diagramas de estados, identificando:
 
 \begin{itemize}
@@ -18,7 +18,7 @@ A primeira etapa do estudo consistiu em pesquisar e compreender o conceito de FS
     \item \textbf{Validações:} Regras que garantem a integridade dos dados coletados antes de prosseguir.
 \end{itemize}
 
-\subsubsection{Estudo de Processamento de Linguagem Natural}
+\subsubsection{Estudo de NLP}
 Aprofundei o conhecimento sobre como sistemas de NLP interpretam linguagem humana através de:
 
 \textbf{Intents (Intenções):} Estudei como treinar o modelo para reconhecer diferentes formas de expressar a mesma intenção. Por exemplo, as frases abaixo representam a mesma intenção de agendamento:
@@ -172,7 +172,7 @@ Contexto do usuario: Cliente pessoa fisica com conta corrente.
 Termo: {CDB}
 \end{lstlisting}
 
-\textit{Resposta Gerada:} "CDB significa Certificado de Depósito Bancário. É uma forma de investimento onde você empresta dinheiro ao banco por um período determinado, e em troca, recebe juros. É considerado um investimento seguro, pois é garantido pelo FGC (Fundo Garantidor de Créditos) até R\$ 250 mil por CPF e instituição."
+\textit{Resposta Gerada:} "CDB significa Certificado de Depósito Bancário. É uma forma de investimento onde você empresta dinheiro ao banco por um período determinado, e em troca, recebe juros. É considerado um investimento seguro, pois é garantido pelo Fundo Garantidor de Créditos (FGC) até R\$ 250 mil por CPF e instituição."
 
 \subsubsection{Implementação do Hand-off Híbrido}
 A praticidade do sistema híbrido está na transição inteligente entre paradigmas.
@@ -201,7 +201,7 @@ Ao final deste estudo, foram desenvolvidas as seguintes competências:
     \item Estratégias de hand-off entre paradigmas distintos
 \end{itemize}
 
-\section{Estudo de Arquitetura Serverless com GCP Cloud Functions (Período: 15/11 a 25/11)}
+\section{Estudo de Arquitetura Serverless com Google Cloud Platform (GCP) Cloud Functions (Período: 15/11 a 24/11)}
 
 \subsection{Contextualização da Tarefa}
 Esta tarefa focou em compreender o paradigma de computação serverless e sua aplicação em integrações de sistemas. A pesquisa envolveu o aprendizado de webhooks, Cloud Functions e padrões de integração entre sistemas conversacionais e APIs legadas.
@@ -283,7 +283,7 @@ A validação foi realizada em múltiplas camadas, conforme evidenciado na Tabel
         \hline
         \textbf{Cenário de Teste} & \textbf{Verificação (Assert)} \\ \hline
         Código de rastreamento válido & A função deve retornar o status correto da API da transportadora. \\ \hline
-        Código de rastreamento inválido & A função deve retornar mensagem de erro amigável sem crashar. \\ \hline
+        Código de rastreamento inválido & A função deve retornar mensagem de erro amigável sem falhar. \\ \hline
         API da transportadora indisponível & A função deve retornar mensagem de erro após timeout e logar o erro. \\ \hline
         Teste de carga (100 req/s) & A Cloud Function deve escalar automaticamente sem degradação de performance. \\ \hline
         Validação de segurança & Requisições sem token de autenticação devem ser rejeitadas (HTTP 401). \\ \hline
@@ -309,7 +309,7 @@ Ao final deste estudo, foram desenvolvidas as seguintes competências:
 \section{Estudo de RAG com Data Stores e Vertex AI (Período: 20/11 a 24/11)}
 
 \subsection{Contextualização da tarefa}
-Esta tarefa teve como o foco estudar sobre a implementação de RAG (Retrieval-Augmented Generation) utilizando a abstração de \textit{Data Stores} do ecossistema Conversational Agents. A pesquisa focou em como conectar agentes a fontes de dados não estruturadas (PDFs, sites) de forma nativa.
+Esta tarefa teve como o foco estudar sobre a implementação de Retrieval-Augmented Generation (RAG) utilizando a abstração de \textit{Data Stores} do ecossistema Conversational Agents. A pesquisa focou em como conectar agentes a fontes de dados não estruturadas (PDFs, sites) de forma nativa.
 
 \subsection{Objetivos de Aprendizado}
 \textbf{Objetivo Principal:} Desenvolver competências em configuração de \textit{Data Stores}, ingestão de documentos e integração com modelos generativos para respostas fundamentadas.

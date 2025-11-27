@@ -4,7 +4,7 @@
 
 \subsection{Tarefa: Design e Implementação do API Gateway e do Contrato de Comunicação entre microsserviços.}
 
-A simples criação de endpoints individuais em cada microsserviço levaria a um acoplamento forte com o front-end e a uma complexidade de gerenciamento. Aplicando os princípios de Design de Software, foi implementada uma API Gateway para desacoplamento entre regras de negócios da aplicação.
+A simples criação de endpoints individuais em cada microsserviço levaria a um acoplamento forte com o front-end e a uma complexidade de gerenciamento. Aplicando os princípios de Design de Software, foi implementada uma Interface de Programação de Aplicações (API) Gateway para desacoplamento entre regras de negócios da aplicação.
 
 \subsection{Execução Baseada em Engenharia de Software}
 \begin{itemize}
@@ -22,12 +22,12 @@ A criação de um player de vídeo envolve a construção de uma Máquina de Est
 \subsection{Execução Baseada em Engenharia de Software}
 
 \subsubsection{Design de Componentes e Lógica de Estado (Hook)}
-Seguindo o princípio de Separação de Responsabilidades e a filosofia da Arquitetura Limpa, a lógica de negócio foi completamente isolada da camada de apresentação (UI).
+Seguindo o princípio de Separação de Responsabilidades e a filosofia da Arquitetura Limpa, a lógica de negócio foi completamente isolada da camada de apresentação.
 
 \begin{itemize}
     \item \textbf{Custom Hook (useVideoPlayerState):} Foi criado um custom hook que serve como o "cérebro" do componente. Ele encapsula toda a interação com a API da biblioteca de vídeo (ex: React Player) e gerencia a FSM interna do player.
     \item \textbf{Estados da FSM:} O hook gerencia os seguintes estados: IDLE, LOADING, PLAYING, PAUSED, SEEKING, ENDED, ERROR.
-    \item \textbf{API Exposta pelo Hook:} O hook retorna um objeto bem definido para o componente de UI, contendo:
+    \item \textbf{API Exposta pelo Hook:} O hook retorna um objeto bem definido para o componente de interface de usuário (UI), contendo:
     \begin{itemize}
         \item \textbf{Estado (state):} Um objeto com informações reativas como \{ isPlaying, progress, duration, isLoading, hasError \}.
         \item \textbf{Ações (actions):} Funções para controlar o player, como \{ handlePlay, handlePause, handleSeek, toggleMute \}.
@@ -40,7 +40,7 @@ A performance foi tratada como um requisito fundamental, especialmente em intera
 \textbf{Evento onProgress:} Este evento pode disparar múltiplas vezes por segundo, o que, se gerenciado ingenuamente com useState, causaria um excesso de re-renderização no React, sobrecarregando e resultando em uma UI "travada".
 
 \begin{itemize}
-    \item \textbf{Manipulação Direta do DOM para UI:} A atualização visual da barra de progresso, que precisa ser fluida, foi desacoplada do estado do React. Foi utilizado o hook useRef para obter uma referência direta ao elemento da barra e atualizar seu estilo (transform: scaleX(...)) diretamente, bypassando o ciclo de renderização do React para essa animação específica.
+    \item \textbf{Manipulação Direta do Document Object Model (DOM) para UI:} A atualização visual da barra de progresso, que precisa ser fluida, foi desacoplada do estado do React. Foi utilizado o hook useRef para obter uma referência direta ao elemento da barra e atualizar seu estilo (transform: scaleX(...)) diretamente, contornando o ciclo de renderização do React para essa animação específica.
     \item \textbf{Throttling para o Estado React:} O estado global do React (ex: o texto "01:32 / 05:00") ainda precisava ser atualizado, mas não com a mesma frequência. Foi implementada uma função de throttle (usando a biblioteca lodash, por exemplo) para garantir que o setState fosse chamado no máximo uma vez a cada 250ms, garantindo a atualização da informação sem sobrecarregar a aplicação.
     \item \textbf{Memoização:} Todos os sub-componentes da UI (ex: <PlayPauseButton />, <VolumeControl />) foram envolvidos em React.memo, e as funções de callback passadas como props foram estabilizadas com useCallback. Isso previne re-renderizações desnecessárias quando o estado pai muda, mas as props específicas daquele componente filho permanecem as mesmas.
 \end{itemize}
@@ -69,18 +69,15 @@ A qualidade e a robustez do componente foram garantidas através de testes unit�
 
 A integração dentro das telas que fazem uso do componente foi finalizada. Esta fase envolveu a passagem das props necessárias (como a URL do vídeo) e a conexão de callbacks (como onEnded) com a lógica de negócio da página que o contém.
 
-\section{Estudos de Viabilidade Técnica para Funcionalidades de Vídeos com interatividades}
-
-\subsection{Detalhamento da Execução}
-Os estudos foram focados em gerar conhecimento técnico e reduzir riscos de negócio e implementação.
+\section{Estudos de Viabilidade Técnica para Funcionalidades de Vídeos com interatividade}
 
 \subsection{Tarefa: Análise de Trade-offs Arquiteturais para a Solução de vídeos interativos com hotspots.}
 
-O estudo técnico envolve uma profunda análise de engenharia de sistemas, considerando custos, escalabilidade e manutenibilidade. Minha tarefa foi fornecer à liderança um relatório técnico para uma decisão informada.
+O estudo técnico envolveu uma análise de engenharia de sistemas, considerando custos, escalabilidade e manutenibilidade. Minha tarefa foi fornecer à liderança um relatório técnico para uma decisão informada.
 
 \subsection{Execução}
 \begin{itemize}
-    \item \textbf{Análise de Requisitos Não-Funcionais:} Foram definidos os critérios de avaliação: latência, escalabilidade , custo por espectador/hora e complexidade de manutenção.
+    \item \textbf{Análise de Requisitos Não-Funcionais:} Foram definidos os critérios de avaliação: latência, escalabilidade, custo por espectador/hora e complexidade de manutenção.
     \item \textbf{Relatório Técnico e Recomendação:} Nele, foi apresentada a análise comparativa e recomendada a abordagem, alinhando a solução técnica com os objetivos de negócio (velocidade de lançamento), com um plano para reavaliar a estratégia se a escala crescesse exponencialmente.
 \end{itemize}
 
@@ -101,26 +98,23 @@ Foram criados os testes necessários, realizada a validação da tarefa em conju
 
 \section{Implementação de Funcionalidade para Imagens no Website (Período: 25/09 a 15/10)}
 
-\subsection{Detalhamento da Execução}
-Entregue de forma incremental, com foco inicial na funcionalidade e posterior na otimização de performance.
-
-\subsection{Tarefa: Otimização de Performance e Métricas de Core Web Vitals (CWV).}
+\subsection{Tarefa: Otimização de Performance e Métricas de CWV.}
 
 Minha atuação como engenheiro foi focada em garantir que a funcionalidade não degradasse as métricas de performance (LCP, CLS), que impactam diretamente a experiência do usuário e o ranking no Google.
 
 \subsection{Execução Baseada em Engenharia de Software}
 \begin{itemize}
-    \item \textbf{Análise e Diagnóstico:} Foram utilizadas ferramentas de profiling (Lighthouse, Chrome DevTools) para medir o impacto da implementação inicial. O diagnóstico foi claro: o carregamento de múltiplas imagens de alta resolução estava atrasando o LCP (Largest Contentful Paint) e o carregamento tardio causava CLS (Cumulative Layout Shift).
+    \item \textbf{Análise e Diagnóstico:} Foram utilizadas ferramentas de profiling (Lighthouse, Chrome DevTools) para medir o impacto da implementação inicial. O diagnóstico foi claro: o carregamento de múltiplas imagens de alta resolução estava atrasando o LCP e o carregamento tardio causava CLS.
     \item \textbf{Otimização Estrutural:} Apliquei uma abordagem multifacetada:
     \begin{itemize}
         \item Foi usado o componente <Image> do Next.js, que automaticamente serve imagens em formatos modernos (WebP) e tamanhos otimizados.
         \item Foi adicionada a prop priority na primeira imagem do carrossel. Isso é uma diretiva de engenharia que sinaliza ao navegador para priorizar o download deste recurso, melhorando diretamente o LCP.
         \item Para as demais imagens, foi implementado lazy loading, fazendo com que fossem carregadas apenas quando se aproximasse do viewport.
-        \item Para resolver o CLS, foram especificadas as dimensões exatas de cada imagem, para que o navegador pudesse reservar o espaço em tela antes do download ser concluído, evitando o "salto" no layout.
+        \item Para resolver o CLS, foram especificadas as dimensões exatas de cada imagem, para que o navegador pudesse reservar o espaço em tela antes do download ser concluído, evitando a mudança no layout repentina.
     \end{itemize}
-    \item \textbf{Validação:} Após as otimizações, foram executadas novamente as ferramentas de profiling para validar que as métricas de CWV estavam dentro dos limites recomendados, tratando a performance como um requisito funcional do projeto.
+    \item \textbf{Validação:} Após as otimizações, foram executadas novamente as ferramentas de profiling para validar que as métricas de CWV estavam dentro dos limites recomendados, tratando a performance como um aspecto essencial do projeto.
     \item \textbf{Publicação de nova versão:} A versão foi publicada com as alterações, este deploy ocorreu no período da noite por conta dos riscos de serem realizados durante o dia.
-    \item \textbf{Testes unitários realizados:} Através dos testes unitários, na Tabela \ref{tab:testes_imagens}, são evidenciados os critérios de assertividade da funcionalidade para garantir a integridade e a qualidade em ambiente local de desenvolvimento. Estes mesmos testes são executados antes do deploy da aplicação.
+    \item \textbf{Testes unitários realizados:} Através dos testes unitários, na Tabela \ref{tab:testes_imagens}, são evidenciados os critérios de assertividade da funcionalidade para garantir a integridade e a qualidade em ambiente local de desenvolvimento. Estes mesmos testes foram executados antes do deploy da aplicação.
 \end{itemize}
 
 \begin{table}[h!]
@@ -143,11 +137,32 @@ Minha atuação como engenheiro foi focada em garantir que a funcionalidade não
 \end{table}
 
 \section{Atualização da versão do React Native (Período: 25/09 a 15/10)}
-Uma atividade de alto risco focada em gerenciamento de débito técnico e configuração de ambiente.
+O projeto realizado em React Native estava com versões desatualizadas do framework, o que deixava expostos 
+riscos de segurança, incompatibilidades com bibliotecas da comunidade, incompatibilidades com as versões mais recentes dos sistemas operacionais móveis (Android e iOS) e 
+limitações de performance. Na tabela 3 é visto uma relação entre os pontos de alterações realizados, a descrição técnica da mudança e a solução 
 
-\subsection{Tarefa: Gerenciamento de Dependências Nativas Conflitantes e do Processo de Build.}
 
-A complexidade de uma atualização do React Native está no código JavaScript, e também no ecossistema nativo subjacente. É uma tarefa de Engenharia de Configuração dos componentes nativos, atualização de bibliotecas do React-Native e correção de builds. Na Tabela \ref{tab:alteracoes_rn}, estão as alterações após a migração da versão anterior para a nova atualização da versão 0.81.
+\subsection{Tarefa: Gerenciamento de Dependências Nativas Conflitantes e do Processo de Build}
+
+A complexidade de uma atualização do React Native está no código JavaScript, e também no ecossistema nativo subjacente. É uma tarefa de configuração dos componentes nativos, atualização de bibliotecas do React-Native e correção de builds.
+
+
+\begin{table}[h!]
+    \centering
+    \caption{Alterações após migração da versão do React-native}
+    \begin{tabular}{p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}}
+        \hline
+        \textbf{Ponto de Alteração} & \textbf{Descrição Técnica da Mudança} & \textbf{Solução} \\ \hline
+        Atualização do Android Gradle & A nova versão do React Native exige uma versão mais recenteo Gradle. Isso implicou em atualizar as dependências no build.gradle do projeto e a URL de distribuição no gradle-wrapper.properties. & A nova versão do AGP introduziu breaking changes na sintaxe do build.gradle, especialmente na forma como as buildFeatures e o namespace são declarados. Solução: Foi necessário a atualização do gradle \\ \hline
+
+        Requisitos do Ecossistema iOS (Xcode) & A versão 0.81 passou a exigir uma versão mais recente do Xcode (ex: Xcode 16) e do iOS SDK (ex: iOS 17). & Isso representou um desafio de infraestrutura. Foi necessário atualizar o ambiente de desenvolvimento de todos os membros da equipe. \\ \hline
+        Depreciação de APIs Core & A nova versão removeu alguns componentes e APIs do core do React Native, movendo-os para pacotes da comunidade (ex: react-native-community). & Instalação da nova dependência (@react-native-clipboard/clipboard), garantindo que nenhuma ocorrência fosse esquecida. \\ \hline
+    \end{tabular}
+    \label{tab:alteracoes_rn}
+    \vspace{0.3em}
+    \noindent{\small Fonte: Do próprio autor}
+\end{table}
+
 
 \subsection{Execução}
 \begin{itemize}
@@ -165,27 +180,11 @@ A complexidade de uma atualização do React Native está no código JavaScript,
 
 \begin{table}[h!]
     \centering
-    \caption{Alterações após migração da versão do React-native}
-    \begin{tabular}{p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}}
-        \hline
-        \textbf{Ponto de Alteração} & \textbf{Descrição Técnica da Mudança} & \textbf{Solução} \\ \hline
-        Atualização do Android Gradle & A nova versão do React Native exige uma versão mais recenteo Gradle. Isso implicou em atualizar as dependências no build.gradle do projeto e a URL de distribuição no gradle-wrapper.properties. & A nova versão do AGP introduziu breaking changes na sintaxe do build.gradle, especialmente na forma como as buildFeatures e o namespace são declarados. Solução: Foi necessário a atualização do gradle \\ \hline
-        Migração para TurboModules & Nossos módulos nativos customizados (escritos em Java) seguiam o padrão antigo (ReactContextBaseJavaModule). A Nova Arquitetura exige a migração para TurboModules. & Exigiu a reescrita de um dos módulos nativos. O código Java teve que ser adaptado para implementar as interfaces geradas pela especificação. Solução: Abordei a migração do módulo, garantindo o build do projeto após a migração do novo TurboModule. \\ \hline
-        Requisitos do Ecossistema iOS (Xcode) & A versão 0.81 passou a exigir uma versão mais recente do Xcode (ex: Xcode 16) e do iOS SDK (ex: iOS 17). & Isso representou um desafio de infraestrutura. Foi necessário atualizar o ambiente de desenvolvimento de todos os membros da equipe. \\ \hline
-        Depreciação de APIs Core & A nova versão removeu alguns componentes e APIs do core do React Native, movendo-os para pacotes da comunidade (ex: react-native-community). & Instalação da nova dependência (@react-native-clipboard/clipboard), garantindo que nenhuma ocorrência fosse esquecida. \\ \hline
-    \end{tabular}
-    \label{tab:alteracoes_rn}
-    \vspace{0.3em}
-    \noindent{\small Fonte: Do próprio autor}
-\end{table}
-
-\begin{table}[h!]
-    \centering
     \caption{Testes unitários na Atualização da versão do React Native}
     \begin{tabular}{p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}}
         \hline
         \textbf{Tipo de Teste} & \textbf{Ferramentas/Método} & \textbf{Verificação (Assert)} \\ \hline
-        Smoke Test (Manual) & Build de Teste (APK/IPA) & A aplicação abre sem crashar após a instalação limpa em um dispositivo físico com Android 14 e iOS 17. \\ \hline
+        Smoke Test (Manual) & Build de Teste & A aplicação abre sem fechar inesperadamente após a instalação limpa em um dispositivo físico com Android 14 e iOS 17. \\ \hline
         Regressão de Módulos Nativos & Teste Manual Focado & Verificar se a funcionalidade do módulo de integração com o SDK do Google (agora como TurboModule) continua operando corretamente. \\ \hline
         Regressão de Performance & Flipper, Perfetto, Xcode Instruments & Medir o tempo de inicialização (TTO) e o uso de memória em repouso. Comparar os resultados com a baseline da versão 0.76. \\ \hline
     \end{tabular}

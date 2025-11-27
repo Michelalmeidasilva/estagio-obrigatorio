@@ -158,7 +158,7 @@ Para garantir a qualidade e a manutenibilidade do software, foram adotados os se
 
 \begin{description}
     \item[Engenharia de Software:] É a aplicação de uma abordagem sistemática, disciplinada e quantificável para o desenvolvimento, operação e manutenção de software \cite{pressman}.
-    \item[Metodologia Ágil:] É uma abordagem iterativa para o gerenciamento de projetos e desenvolvimento de software que ajuda as equipes a entregar valor aos seus clientes de forma mais rápida e com menos dores de cabeça.
+    \item[Metodologia Ágil:] É uma abordagem iterativa para o gerenciamento de projetos e desenvolvimento de software que ajuda as equipes a entregar valor aos seus clientes de forma mais rápida e com agilidade de entrega das funcionalidades.
     \item[Scrum:] É um dos frameworks mais populares para a implementação de desenvolvimento ágil. Ele é projetado para que equipes possam entregar valor ao cliente de forma incremental e iterativa \cite{scrum}.
     \item[Código Limpo (Clean Code):] É uma filosofia de desenvolvimento de software popularizada por Robert C. Martin ("Uncle Bob"). A premissa é que o código deve ser escrito de forma simples, direta e legível, como uma prosa bem escrita. Suas características incluem o uso de nomes significativos para variáveis e funções, funções pequenas com responsabilidades únicas e a minimização de complexidade.
     \item[Arquitetura Limpa (Clean Architecture):] Também concebida por Robert C. Martin, é um modelo de design de software que impõe uma rigorosa separação de responsabilidades. A arquitetura é representada por círculos concêntricos, onde a regra principal é a Regra da Dependência: as dependências do código-fonte só podem apontar para dentro. Nada em um círculo interno pode saber qualquer coisa sobre um círculo externo.
@@ -184,7 +184,7 @@ A arquitetura do sistema evoluiu de modelos tradicionais para abordagens mais mo
 
 \begin{description}
     \item[Arquitetura Monolítica:] Modelo tradicional onde a aplicação é uma única unidade coesa. Todos os componentes (UI, lógica, dados) são fortemente acoplados.
-    \item[Arquitetura de Microsserviços:] Padrão onde uma aplicação complexa é composta por serviços pequenos e independentes, cada um com uma capacidade de negócio específica, comunicando-se via APIs \cite{microservices}.
+    \item[Arquitetura de Microsserviços:] Padrão onde uma aplicação complexa é composta por serviços pequenos e independentes, cada um com uma capacidade de negócio específica, comunicando-se via Interface de Programação de Aplicações (APIs) \cite{microservices}.
     \item[Computação Serverless:] Permite construir e executar aplicações sem gerenciar servidores.
     \begin{itemize}
         \item \textbf{Cloud Functions:} Funções de propósito único, orientadas a eventos, que escalam automaticamente.
@@ -209,16 +209,32 @@ A arquitetura do sistema evoluiu de modelos tradicionais para abordagens mais mo
     \item[Ecossistema iOS:] Sistema proprietário da Apple. O desenvolvimento utiliza Swift (sucessor do Objective-C) e gerenciamento de dependências via Swift Package Manager ou CocoaPods.
     \item[React Native:] Framework para desenvolvimento multiplataforma usando JavaScript e React \cite{reactnative}.
     \begin{itemize}
-        \item \textbf{Arquitetura Legada (Bridge):} Comunicação assíncrona e serializada (JSON) entre JavaScript e Nativo.
-        \item \textbf{Nova Arquitetura (JSI/Fabric/TurboModules):} Permite comunicação síncrona e direta (C++) entre JavaScript e Nativo, eliminando a "ponte" e melhorando a performance.
-        \item \textbf{Ferramentas:} \textit{React-native-builder-bob} para criação de bibliotecas e \textit{Upgrade Helper} para migração de versões.
+        \item \textbf{Arquitetura Legada (Bridge):} Baseia-se em uma comunicação assíncrona onde mensagens JSON são serializadas e enviadas através de uma "ponte" entre as threads JavaScript e Nativa. Esse processo de serialização/desserialização introduz um gargalo de performance (overhead), especialmente em aplicações que exigem alta frequência de troca de dados, como animações e gestos.
+
+        \item \textbf{Nova Arquitetura} A nova arquitetura JSI (JavaScript Interface)} representa uma evolução fundamental no React Native. Diferente da arquitetura antiga, que dependia de serialização assíncrona de mensagens JSON, a JSI permite que o código JavaScript mantenha referências diretas a objetos C++ (Host Objects). Isso possibilita a invocação síncrona de métodos nativos, eliminando o overhead de serialização e permitindo o compartilhamento de memória entre os runtimes. O resultado é uma interoperabilidade mais rápida e eficiente, essencial para bibliotecas de alta performance e animações complexas A Figura \ref{fig:com_async} ilustra o processo de criação de um componente e as funções que possibilitam a comunicação entre o código React Native e os módulos nativos.
     \end{itemize}
+
+
+    \begin{figure}[h!]
+        \centering
+        \caption{Comunicação JSI entre React-native e Nativo.}
+        \label{fig:com_async}
+        \includegraphics[scale=0.5]
+        {IMAGENS/comunicao-async-rn.png} % Placeholder para a imagem
+        \vspace{0.3em}
+        \newline
+        {\small Fonte: Do próprio autor.}
+    \end{figure}
+    \newpage
+    
+    \end{itemize}
+    \item \textbf{React-native-builder-bob} para criação de bibliotecas e \textit{Upgrade Helper} para migração de versões.
 \end{description}
 
 \section{Design e Qualidade de Software}
 
 \begin{description}
-    \item[Design System:] Fonte única de verdade para design e desenvolvimento. O "Pulso" (RD Saúde) provê tokens, componentes e documentação para garantir consistência.
+    \item[Design System:] Fonte única de verdade para design e desenvolvimento. O Design System provê tokens, componentes e documentação para garantir consistência.
     \item[Chrome DevTools:] Ferramentas de desenvolvimento embutidas no Chrome para inspeção de DOM, depuração de JS e análise de rede/performance.
     \item[Lighthouse:] Ferramenta de auditoria automatizada que avalia Performance, Acessibilidade, Boas Práticas, SEO e PWA.
     \item[Web Vitals:] Iniciativa do Google para métricas de qualidade de experiência do usuário.
@@ -234,6 +250,8 @@ A arquitetura do sistema evoluiu de modelos tradicionais para abordagens mais mo
     \item[RAG (Retrieval-Augmented Generation):] Técnica que otimiza respostas de LLMs usando bases de conhecimento confiáveis (Data Stores).
     \item[Model Context Protocol (MCP):] Padrão aberto para conectores seguros entre dados e ferramentas de IA.
     \item[Agent Development Kits (ADK):] Frameworks para construção de agentes autônomos.
+
+  \item[Processamento de Linguagem Natural (NLP):] Trata-se do ramo da Inteligência Artificial que permite às máquinas compreender e gerar a linguagem humana. Unindo computação e linguística, essa tecnologia é a base para o funcionamento eficaz de chatbots, tradutores e assistentes de voz.
 \end{description}
 
 \input{TEXTO/atividades-parte-a}

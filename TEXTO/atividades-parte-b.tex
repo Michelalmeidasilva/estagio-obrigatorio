@@ -1,63 +1,35 @@
-\section{Migração de Arquitetura Bridge para JSI, Fabric e Turbo Module da biblioteca de (Período: 16/10 a 31/10)}
+\section{Migração de Arquitetura Bridge para JS (Período: 16/10 a 31/10)}
 
-A tarefa consistiu na correção de uma breaking change crítica, introduzida após a atualização de versão do React Native. A mudança exigiu a refatoração de uma biblioteca interna, com modificações diretas no código nativo (Android/iOS) para adequação à Nova Arquitetura (JSI/Turbo Modules).
+A mudança exigiu a refatoração de uma biblioteca interna, com modificações diretas no código nativo (Android/iOS) para adequação à Nova Arquitetura (JSI/Turbo Modules).
 
-Para um diagnóstico preciso da falha, foi realizada uma pesquisa aprofundada em fontes técnicas, incluindo a documentação oficial (GitHub do React Native), consultas no Stack Overflow e o uso de ferramentas de assistência de código (Cursor AI).
+O principal desafio metodológico foi o ciclo de feedback (build/test cycle) do projeto principal, que consumia aproximadamente 40 minutos por alteração. Essa sobrecarga tornava a depuração Iterativa impraticável e arriscada.
 
-O principal desafio metodológico foi o ciclo de feedback (build/test cycle) do projeto principal, que consumia aproximadamente 40 minutos por alteração. Esse overhead tornava a depuração Iterativa impraticável e arriscada.
-
-Para mitigar esse risco e aumentar a agilidade, foi adotada a estratégia de desenvolvimento em ambiente isolado (Sandboxing). A correção foi implementada e validada em um aplicativo de demonstração ("sample app") minimalista, permitindo ciclos rápidos de desenvolvimento e depuração antes da integração.
+Para mitigar esse risco e aumentar a agilidade, foi adotada a estratégia de desenvolvimento em ambiente isolado (Sandboxing). A correção foi implementada e validada em um aplicativo de demonstração, permitindo ciclos rápidos de desenvolvimento e depuração antes da integração.
 
 O processo seguiu um pipeline de engenharia de software estruturado, desde o desenvolvimento local até a produção, conforme detalhado nas etapas abaixo.
 
-\subsection{Desenho da solução}
-
-A Figura \ref{fig:com_async} ilustra o processo de criação de um componente e as funções que possibilitam a comunicação entre o código React Native e os módulos nativos.
-
-
-\newpage
-\begin{figure}[h!]
-    \centering
-    \caption{Comunicação JSI entre React-native e Nativo.}
-    \label{fig:com_async}
-    \includegraphics[width=\textwidth]{IMAGENS/comunicao-async-rn.png} % Placeholder para a imagem
-    \vspace{0.3em}
-    \noindent{\small Fonte: Do próprio autor.}
-\end{figure}
-
 \subsection{Desenvolvimento}
-O desenvolvimento foi separado entre duas implementações: a Implementação A utilizando a arquitetura legada por bridge e a Implementação B com a nova arquitetura após a migração. O exemplo utilizado será um simples print da mensagem "Olá mundo".
+O desenvolvimento foi separado entre duas implementações: a Implementação A utilizando a arquitetura legada por bridge e a Implementação B com a nova arquitetura após a migração. O exemplo utilizado será um simples print da mensagem ``Olá mundo''.
 
 \subsubsection{Implementação A - Arquitetura Legada}
 
 A implementação abaixo utiliza a arquitetura legada, empregando o módulo NativeModules. Na camada JavaScript da aplicação, a comunicação com o módulo nativo é estabelecida por meio da importação de NativeModules do pacote react-native.
 
-\newpage
 
 \begin{lstlisting}[language=JavaScript, caption={App.js (Lado JS)}]
 import React from 'react';
 import { Button, View, NativeModules } from 'react-native';
-
 const { HelloWorldModule } = NativeModules;
 
 const App = () => {
   const handlePressLegacy = async () => {
-    try {
       const saudacao = await HelloWorldModule.getHelloWorld();
-      
       console.log(saudacao); // Imprime "Olá mundo (Legado via Bridge)"
-    
-    } catch (e) {
-      console.error(e);
-    }
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center' }}>
-      <Button
-        title="Testar Bridge Legada"
-        onPress={handlePressLegacy}
-      />
+    <View style={{ flex: 1, justifyContent: "center" }}>
+      <Button title="Testar Bridge Legada" onPress={handlePressLegacy}/>
     </View>
   );
 };
@@ -68,18 +40,14 @@ export default App;
 No Código Nativo (Android - Java) foi realizada a implementação de um método chamado getHelloWorld para o retorno de uma string simples e um método getName para o retorno do nome do módulo nativo, sendo implementada da seguinte maneira:
 
 
-\newpage
 \begin{lstlisting}[language=Java, caption={HelloWorldModule.java}]
-// /android/app/src/main/java/.../HelloWorldModule.java
-package com.meuapp;
-
+package com.meuapp; // HelloWorldModule.java
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
 
 public class HelloWorldModule extends ReactContextBaseJavaModule {
-
     public HelloWorldModule(ReactApplicationContext context) {
         super(context);
     }
@@ -89,11 +57,9 @@ public class HelloWorldModule extends ReactContextBaseJavaModule {
         return "HelloWorldModule"; // Nome usado no JS
     }
 
-    // Método exposto para o JS
-    @ReactMethod
+    @ReactMethod // Metodo exposto para o JS
     public void getHelloWorld(Promise promise) {
-        // A ponte é assíncrona, então usamos Promise
-        promise.resolve("Olá mundo (Legado via Bridge)");
+        promise.resolve("Ola mundo (Legado via Bridge)"); 
     }
 }
 \end{lstlisting}
@@ -103,26 +69,23 @@ public class HelloWorldModule extends ReactContextBaseJavaModule {
 No código nativo (iOS - Objective-C), análogo ao código em Java, a implementação foi realizada através de:
 
 \begin{lstlisting}[language=C++, caption={HelloWorldModule (Objective-C)}]
-// HelloWorldModule.h
-#import <React/RCTBridgeModule.h>
-// O módulo deve implementar o protocolo <RCTBridgeModule>
+#import <React/RCTBridgeModule.h> // HelloWorldModule.h
+// O modulo deve implementar o protocolo <RCTBridgeModule>
 @interface HelloWorldModule : NSObject <RCTBridgeModule>
 @end
 
-// HelloWorldModule.m
 #import "HelloWorldModule.h"
 @implementation HelloWorldModule
-// Expõe o módulo para o JS com o nome "HelloWorldModule"
+// Expoe o modulo para o JS com o nome "HelloWorldModule"
 RCT_EXPORT_MODULE(HelloWorldModule);
-// Expõe o método getHelloWorld para o JS
-// A chamada é assíncrona e usa Promises
+// Expoe o metodo getHelloWorld para o JS
 RCT_EXPORT_METHOD(getHelloWorld: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject)  {
-    NSString *saudacao = @"Olá mundo (Legado via Bridge)";
+    NSString *saudacao = @"Ola mundo (Legado via Bridge)";
     if (saudacao) {
         resolve(saudacao);
     } else {
-        reject(@"error", @"Não foi possível gerar a saudação", nil);
+        reject(@"error", @"Nao foi possível gerar a saudação", nil);
     }
 }
 @end
@@ -140,33 +103,32 @@ RCT_EXPORT_METHOD(getHelloWorld: (RCTPromiseResolveBlock)resolve
 \subsubsection{Implementação B - Nova arquitetura}
 No exemplo de implementação do logMessage com TurboModule, a migração demandou um arquivo de especificação (Spec) em TypeScript para definição da API, o qual serviu de base para geração do código boilerplate nativo.
 
-\textbf{Definição da API (Spec - TypeScript)}: Um arquivo de especificação define o contrato da API de forma explícita na camada javascript, da seguinte maneira:
+\textbf{Definição da Interface de API (Spec - TypeScript)}: Um arquivo de especificação define o contrato da API de forma explícita na camada javascript, da seguinte maneira:
 
 \begin{lstlisting}[language=TypeScript, caption={NativeHelloWorld.ts (Spec)}]
 // /js/NativeHelloWorld.ts (A "Spec")
 import type { TurboModule } from 'react-native/Libraries/TurboModule/TurboModule';
 import { TurboModuleRegistry } from 'react-native';
-
 // 1. Definimos a interface
 export interface Spec extends TurboModule {
-  // 2. Definimos um método SÍNCRONO
+// 2. Definimos um método SÍNCRONO
   getHelloWorld(): string; 
 }
-
 // 3. Registramos o módulo (o nome 'RTNHelloWorld' é o nome oficial do componente)
 export default TurboModuleRegistry.getEnforcing<Spec>(
   'RTNHelloWorld',
 );
 \end{lstlisting}
 
+
+
+\newpage
 \textbf{Implementação Nativa (Android - Kotlin)}
 
 Na implementação nativa, foi utilizada uma interface gerada que permitiu o acesso direto ao runtime JavaScript.
 
-\newpage
 \begin{lstlisting}[language=Java, caption={RTNHelloWorldModule.java}]
-// /android/app/src/main/java/.../RTNHelloWorldModule.java
-package com.meuapp;
+package com.meuapp; //RTNHelloWorldModule.java
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
@@ -175,27 +137,22 @@ import androidx.annotation.NonNull;
 // 1. O Codegen gera 'NativeHelloWorldSpec'
 import com.facebook.fbreact.specs.NativeHelloWorldSpec; 
 
-// 2. Implementamos a Spec gerada
 public class RTNHelloWorldModule extends NativeHelloWorldSpec {
-
-    public static final String NAME = "RTNHelloWorld";
-
-    public RTNHelloWorldModule(ReactApplicationContext context) {
+  public static final String NAME = "RTNHelloWorld";
+  public RTNHelloWorldModule(ReactApplicationContext context) {
         super(context);
     }
 
-    @Override
-    @NonNull
-    public String getName() {
-        return NAME;
-    }
+  @Override
+  @NonNull
+  public String getName() {
+    return NAME;
+  }
 
-    // 3. Implementação SÍNCRONA!
-    //    Sem 'Promise', o retorno é direto.
-    @Override
-    public String getHelloWorld() {
-        return "Olá mundo (Nova Arquitetura via JSI)";
-    }
+  @Override
+  public String getHelloWorld() {
+    return "Ola mundo (Nova Arquitetura via JSI)";
+ }
 }
 \end{lstlisting}
 
@@ -217,20 +174,14 @@ import RTNHelloWorld from './js/NativeHelloWorld';
 const App = () => {
 
   const handlePressNewArch = () => {
-    // 2. A chamada é SÍNCRONA!
-    //    - Sem async/await, sem .then()
-    //    - A JSI permite a chamada direta
     const saudacao = RTNHelloWorld.getHelloWorld();
-    
-    console.log(saudacao); // Imprime "Olá mundo (Nova Arquitetura via JSI)"
+    // Imprime "Ola mundo (Nova Arquitetura via JSI)"
+    console.log(saudacao); 
   };
 
   return (
     <View style={{ flex: 1, justifyContent: 'center' }}>
-      <Button
-        title="Testar Nova Arquitetura"
-        onPress={handlePressNewArch}
-      />
+      <Button title="Testar Nova Arquitetura" onPress={handlePressNewArch} />
     </View>
   );
 };
@@ -279,12 +230,10 @@ RCT_EXPORT_MODULE(RTNHelloWorld)
 @end
 \end{lstlisting}
 
-A nova arquitetura do React Native substituiu o sistema antigo de comunicação entre JavaScript e código nativo. No lugar da bridge assíncrona que funcionava como um intermediário lento, neste novo formato tem-se uma conexão direta e síncrona. Esta arquitetura tem três componentes principais: primeiro, o JSI que permite ao JavaScript chamar funções nativas diretamente, sem serialização de dados. Segundo, o TurboModules que gerencia essa comunicação de forma eficiente. E terceiro, o Codegen que automaticamente gerou todo o código de conexão necessário. A vantagem neste formato é que tudo acontece de forma síncrona. Não há espera por callbacks ou promises - as chamadas são instantâneas. Isso tornou a aplicação significativamente mais rápida e responsiva.
-
 \subsection{Execução do módulo em um projeto de demonstração}
 Esta etapa foi a aplicação direta da estratégia de mitigação de risco para contornar o build de 40 minutos do projeto principal.
 
-\textbf{Descrição:} Um aplicativo React Native mínimo ("sample app") foi criado e configurado. O objetivo deste ambiente foi isolar totalmente a biblioteca do restante do ecossistema complexo do projeto principal.
+\textbf{Descrição:} Um aplicativo React Native mínimo foi criado e configurado com os mesmos parâmetros da aplicação principal. O objetivo deste ambiente foi isolar totalmente a biblioteca do restante do ecossistema complexo do projeto principal.
 
 \textbf{Execução:} A biblioteca modificada foi vinculada localmente a este projeto de demonstração (utilizando yarn link ou referência de diretório no package.json).
 
@@ -302,19 +251,19 @@ Após a validação funcional no ambiente isolado, a biblioteca precisou ser dis
 
 \textbf{Execução:} O processo seguiu o Versionamento Semântico (SemVer), onde a versão do pacote foi incrementada.
 
-\textbf{Processo:} O build de distribuição da biblioteca foi gerado (compilando o TypeScript e preparando os artefatos nativos via react-native-builder-bob). O pacote foi então publicado em um registro de pacotes privados (NPM privado), garantindo que a nova versão estivesse acessível para o pipeline de CI/CD do aplicativo principal.
+\textbf{Processo:} O build de distribuição da biblioteca foi gerado (compilando o TypeScript e preparando os artefatos nativos via react-native-builder-bob). O pacote foi então publicado em um registro de pacotes privados (NPM privado), garantindo que a nova versão estivesse acessível para o pipeline de Integração Contínua e Entrega Contínua (CI/CD) do aplicativo principal.
 
 \subsection{Testes em ambiente de homologação (QA)}
 Este foi o primeiro nível de integração real, onde a correção encontrou o ecossistema completo do aplicativo.
 
-\textbf{Descrição:} O ambiente de homologação (QA) simula a infraestrutura de produção, mas com dados controlados e isolados, destinado à validação pela equipe de Qualidade.
+\textbf{Descrição:} O ambiente de homologação (QA) simula a infraestrutura de produção, mas com dados controlados e isolados, destinado à validação pela equipe de Garantia de Qualidade (QA).
 
 \textbf{Execução:} O aplicativo principal foi atualizado para consumir a nova versão da biblioteca recém-publicada. Um novo build do aplicativo foi gerado e distribuído para a equipe de QA.
 
 \textbf{Validação:} A equipe de QA executou um plano de testes de regressão completo, focado não apenas na funcionalidade corrigida, mas também em áreas adjacentes. O objetivo foi garantir que (A) a correção funcionava conforme o esperado dentro do app complexo e (B) a atualização não introduziu efeitos colaterais (regressões) em outras partes do sistema.
 
 \subsection{Testes em ambientes pré-produtivos (UAT/Staging)}
-Esta etapa representou o "ensaio geral" antes da produção.
+Esta etapa representou o ``ensaio geral'' antes da produção.
 
 \textbf{Descrição:} O ambiente de Pré-Produção (ou Staging) é um espelho fiel do ambiente de Produção, utilizando a mesma infraestrutura e, idealmente, uma réplica recente (e anonimizada) do banco de dados produtivo.
 
@@ -333,13 +282,15 @@ A etapa final do pipeline, disponibilizando a correção para todos os usuários
 
 \section{Migração do react-native 0.71.5 para a 0.81.4 (Período: 16/10 a 31/10)}
 
-O módulo nativo, empacotado originalmente com o react-native-builder-bob, tornou-se obsoleto e causava erro de renderização dos componentes de layout após o upgrade do React Native. Utilizando o boilerplate e as ferramentas de linking do react-native-builder-bob, foram reconfigurados os wrappers nativos. Este processo exigiu a criação de um arquivo de especificação TypeScript (.d.ts), que define formalmente a interface do módulo, garantindo a tipagem estática. Em seguida, foi adaptado os entry points nativos (em Kotlin para Android e Swift para iOS) para implementar a interface gerada pelo JSI, o que assegurou a comunicação síncrona, tipada e de alta performance entre o JavaScript e o código nativo. O upgrade do React Native da versão 0.71.5 para a 0.81.4 envolveu diversas mudanças estruturais, de dependências e de configuração. Abaixo está um resumo das principais alterações realizadas, conforme o relatório do Upgrade Helper.
-
-\subsection{Desenvolvimento}
+O módulo nativo, empacotado originalmente com o react-native-builder-bob, tornou-se obsoleto e causava erro de renderização dos componentes de layout após o upgrade do React Native. Utilizando o boilerplate e as ferramentas de linking do react-native-builder-bob, foram reconfigurados os wrappers nativos. Este processo exigiu a criação de um arquivo de especificação TypeScript (.d.ts), que define formalmente a interface do módulo, garantindo a tipagem estática. Em seguida, foi adaptado os entry points nativos (em Kotlin para Android e Swift para iOS) para implementar a interface gerada pelo JSI, o que assegurou a comunicação síncrona, tipada e de alta performance entre o JavaScript e o código nativo. O upgrade do React Native da versão 0.71.5 para a 0.81.4 envolveu diversas mudanças estruturais, de dependências e de configuração. Na \autoref{tab:mudancas-rn-versao} está um resumo das principais alterações realizadas, conforme o relatório do Upgrade Helper.
 
 \begin{table}[h!]
     \centering
+    % 1. O caption vem ANTES do label
     \caption{Mudanças de Versão e Dependências}
+    % 2. O label deve ser igual ao usado no \autoref (com o prefixo tab:)
+    \label{tab:mudancas-rn-versao}
+    
     \begin{tabular}{l|l|l}
     \hline
     \textbf{Item} & \textbf{Versão Anterior (0.71.5)} & \textbf{Versão Atualizada (0.81.4)} \\ \hline
@@ -352,12 +303,16 @@ O módulo nativo, empacotado originalmente com o react-native-builder-bob, torno
     Prettier & \textasciicircum2.4.1 & 2.8.8 \\ \hline
     \end{tabular}
     \vspace{0.3em}
-    \noindent{\small Fonte: Do próprio autor.}
+    \newline
+    \small Fonte: Do próprio autor.
 \end{table}
+
+\subsection{Desenvolvimento}
+
 
 Houve também a adição de novas dependências de desenvolvimento, como:
 \begin{itemize}
-    \item Inclusão dos pacotes CLI da comunidade na versão 20.0.0 (@react-native-community/cli, cli-platform-android, cli-platform-ios).
+    \item Inclusão dos pacotes Interface de Linha de Comando (CLI) da comunidade na versão 20.0.0 (@react-native-community/cli, cli-platform-android, cli-platform-ios).
     \item Inclusão de novos presets e configurações específicas do React Native: @react-native/babel-preset, @react-native/eslint-config, @react-native/metro-config, e @react-native/typescript-config, todos na versão 0.81.48.
     \item Remoção de pacotes antigos como @react-native-community/eslint-config e @tsconfig/react-native.
     \item O arquivo .node-version foi deletado.
@@ -365,6 +320,16 @@ Houve também a adição de novas dependências de desenvolvimento, como:
 
 \subsubsection{Destaques das Mudanças de Versões Intermediárias}
 O upgrade passou por versões que introduziram mudanças significativas:
+
+\subsubsection{Alterações nos Arquivos de Configuração}
+\begin{description}
+    \item[.eslintrc.js:] O extend do ESLint foi alterado de @react-native-community para @react-native.
+    \item[.gitignore:] Foram adicionadas regras para ignorar arquivos relacionados ao Kotlin (.kotlin/). Foi atualizado a regra para ignorar dependências do CocoaPods de /ios/Pods/ para **/Pods/. Foram adicionadas regras para ignorar arquivos temporários do Metro (.metro-health-check*) e diretórios do Yarn v3 (.yarn/*, .yarn/plugins, .yarn/versions, etc.).
+    \item[.prettierrc.js:] Foi realizada a remoção de duas regras de formatação: bracketSameLine: true e bracketSpacing: false.
+    \item[Gemfile (iOS):] Foi realizado o aumento do requisito mínimo do Ruby para >=2.6.18. Foi realizada a atualização e exclusão de versões problemáticas do cocoapods e activesupport. Foi realizado a adição de bibliotecas da Ruby Standard Library removidas no Ruby 3.4.0, como bigdecimal, logger, benchmark e mutex\_m18.
+\end{description}
+
+
 
 \begin{table}[h!]
     \centering
@@ -381,19 +346,11 @@ O upgrade passou por versões que introduziram mudanças significativas:
     \noindent{\small Fonte: Do próprio autor.}
 \end{table}
 
-\subsubsection{Alterações nos Arquivos de Configuração}
-\begin{description}
-    \item[.eslintrc.js:] O extend do ESLint foi alterado de @react-native-community para @react-native.
-    \item[.gitignore:] Foram adicionadas regras para ignorar arquivos relacionados ao Kotlin (.kotlin/). Foi atualizado a regra para ignorar dependências do CocoaPods de /ios/Pods/ para **/Pods/. Foram adicionadas regras para ignorar arquivos temporários do Metro (.metro-health-check*) e diretórios do Yarn v3 (.yarn/*, .yarn/plugins, .yarn/versions, etc.).
-    \item[.prettierrc.js:] Foi realizada a remoção de duas regras de formatação: bracketSameLine: true e bracketSpacing: false.
-    \item[Gemfile (iOS):] Foi realizado o aumento do requisito mínimo do Ruby para >=2.6.18. Foi realizada a atualização e exclusão de versões problemáticas do cocoapods e activesupport. Foi realizado a adição de bibliotecas da Ruby Standard Library removidas no Ruby 3.4.0, como bigdecimal, logger, benchmark e mutex\_m18.
-\end{description}
-
 \subsubsection{Refatoração do Arquivo App.tsx (Tela Inicial)}
 A estrutura da tela inicial padrão (App.tsx) foi completamente refatorada, migrando de uma implementação manual dos componentes do boilerplate para o uso de um novo componente dedicado:
 \begin{itemize}
     \item O código foi migrado para usar SafeAreaProvider e o hook useSafeAreaInsets do pacote react-native-safe-area-contex.
-    \item O conteúdo principal da tela inicial (seções "Step One", "See Your Changes", etc.) foi substituído por um único componente: <NewAppScreen />, importado de @react-native/new-app-screen.
+    \item O conteúdo principal da tela inicial (seções ``Step One'', ``See Your Changes'', etc.) foi substituído por um único componente: <NewAppScreen />, importado de @react-native/new-app-screen.
     \item O objeto styles padrão foi simplificado, mantendo apenas o estilo de container.
 \end{itemize}
 
@@ -446,14 +403,14 @@ Esta foi a etapa de execução técnica da correção, dividida por plataforma:
 \end{itemize}
 
 \subsection{Execução do módulo em um projeto de demonstração}
-Devido às dificuldades no processo de build do projeto principal, a validação da crítica mudança na dependência nativa foi realizada em um aplicativo de demonstração. Esta abordagem foi adotada para agilizar o debugging, contornando o build lento do projeto principal. No ambiente isolado do sample app, foi possível:
+Devido às dificuldades no processo de build do projeto principal, a validação da crítica mudança na dependência nativa foi realizada em um aplicativo de demonstração. Esta abordagem foi adotada para agilizar a depuração, contornando o build lento do projeto principal. No ambiente isolado do sample app, foi possível:
 \begin{itemize}
     \item Vincular o módulo modificado localmente.
     \item Verificar que a funcionalidade anteriormente comprometida do módulo foi restaurada.
 \end{itemize}
 
 \subsection{Publicação de nova versão da biblioteca}
-Com a correção validada no "sample app", a biblioteca foi preparada para distribuição interna. O versionamento semântico foi aplicado (ex: incremento de patch ou minor), e o pacote foi publicado no registro privado (Artifactory/NPM). Esta nova versão continha as alterações de configuração nativa (build.gradle e Podfile) e o código Swift adaptado, pronta para ser consumida pelo aplicativo principal.
+Com a correção validada no ``sample app'', a biblioteca foi preparada para distribuição interna. O versionamento semântico foi aplicado (ex: incremento de patch ou minor), e o pacote foi publicado no registro privado (Artifactory/NPM). Esta nova versão continha as alterações de configuração nativa (build.gradle e Podfile) e o código Swift adaptado, pronta para ser consumida pelo aplicativo principal.
 
 \subsection{Testes em ambiente de homologação (QA)}
 A nova versão da biblioteca foi atualizada no aplicativo principal e um build foi gerado para o ambiente de QA. A equipe de qualidade executou um plano de testes de regressão focado:
@@ -467,7 +424,7 @@ Ambos os dois testes acima foram validados e passados com sucesso.
 O build aprovado em QA foi promovido ao ambiente de Staging, um espelho do ambiente de produção. Esta etapa validou a interação da aplicação com os serviços reais do Google (autenticação, mapas, etc., dependendo do SDK) utilizando as novas APIs v12. O objetivo foi garantir que a atualização de segurança e compatibilidade funcionava corretamente em um cenário de uso real antes da exposição ao cliente.
 
 \subsection{Deploy para ambiente produtivo}
-Dada a natureza da mudança (atualização de segurança e correção de breaking changes), o deploy foi tratado com monitoramento intensivo. Foi utilizado um Staged Rollout (lançamento em fases) via Play Store e App Store. A versão foi liberada inicialmente para 1\% dos usuários, com acompanhamento em tempo real das ferramentas de crash reporting (Crashlytics). Após a confirmação da estabilidade (ausência de novos crashes nativos relacionados ao Google SDK), a distribuição foi escalonada para 100\%.
+Dada a natureza da mudança (atualização de segurança e correção de breaking changes), o deploy foi tratado com monitoramento intensivo. Foi utilizado um Staged Rollout (lançamento em fases) via Play Store e App Store. A versão foi liberada inicialmente para 1\% dos usuários, com acompanhamento em tempo real das ferramentas de relatório de falhas (Crashlytics). Após a confirmação da estabilidade (ausência de novas falhas nativas relacionadas ao Google SDK), a distribuição foi escalonada para 100\%.
 
 \section{Desenvolvimento de um MVP de um Sistema Web (Período: início em 16/10, tarefa ainda em andamento)}
 
