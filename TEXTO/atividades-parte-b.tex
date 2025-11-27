@@ -12,8 +12,10 @@ O processo seguiu um pipeline de engenharia de software estruturado, desde o des
 
 \subsection{Desenho da solução}
 
-A Figura \ref{fig:comunicacao_jsi} ilustra o processo de criação de um componente e as funções que possibilitam a comunicação entre o código React Native e os módulos nativos.
+A Figura \ref{fig:com_async} ilustra o processo de criação de um componente e as funções que possibilitam a comunicação entre o código React Native e os módulos nativos.
 
+
+\newpage
 \begin{figure}[h!]
     \centering
     \caption{Comunicação JSI entre React-native e Nativo.}
@@ -29,6 +31,8 @@ O desenvolvimento foi separado entre duas implementações: a Implementação A 
 \subsubsection{Implementação A - Arquitetura Legada}
 
 A implementação abaixo utiliza a arquitetura legada, empregando o módulo NativeModules. Na camada JavaScript da aplicação, a comunicação com o módulo nativo é estabelecida por meio da importação de NativeModules do pacote react-native.
+
+\newpage
 
 \begin{lstlisting}[language=JavaScript, caption={App.js (Lado JS)}]
 import React from 'react';
@@ -63,6 +67,8 @@ export default App;
 
 No Código Nativo (Android - Java) foi realizada a implementação de um método chamado getHelloWorld para o retorno de uma string simples e um método getName para o retorno do nome do módulo nativo, sendo implementada da seguinte maneira:
 
+
+\newpage
 \begin{lstlisting}[language=Java, caption={HelloWorldModule.java}]
 // /android/app/src/main/java/.../HelloWorldModule.java
 package com.meuapp;
@@ -92,6 +98,8 @@ public class HelloWorldModule extends ReactContextBaseJavaModule {
 }
 \end{lstlisting}
 
+
+\newpage
 No código nativo (iOS - Objective-C), análogo ao código em Java, a implementação foi realizada através de:
 
 \begin{lstlisting}[language=C++, caption={HelloWorldModule (Objective-C)}]
@@ -120,7 +128,7 @@ RCT_EXPORT_METHOD(getHelloWorld: (RCTPromiseResolveBlock)resolve
 @end
 \end{lstlisting}
 
-\textbf{Funcionamento da Bridge:}
+\subsubsection{Funcionamento da Bridge:}
 \begin{itemize}
     \item \textbf{Chamada JS:} O JavaScript chamava HelloWorldModule.getHelloWorld()
     \item \textbf{Serialização:} O React Native serializava o nome do módulo (HelloWorldModule) e o nome do método (getHelloWorld) em uma mensagem JSON
@@ -132,9 +140,7 @@ RCT_EXPORT_METHOD(getHelloWorld: (RCTPromiseResolveBlock)resolve
 \subsubsection{Implementação B - Nova arquitetura}
 No exemplo de implementação do logMessage com TurboModule, a migração demandou um arquivo de especificação (Spec) em TypeScript para definição da API, o qual serviu de base para geração do código boilerplate nativo.
 
-\textbf{Definição da API (Spec - TypeScript)}
-
-Um arquivo de especificação define o contrato da API de forma explícita na camada javascript, da seguinte maneira:
+\textbf{Definição da API (Spec - TypeScript)}: Um arquivo de especificação define o contrato da API de forma explícita na camada javascript, da seguinte maneira:
 
 \begin{lstlisting}[language=TypeScript, caption={NativeHelloWorld.ts (Spec)}]
 // /js/NativeHelloWorld.ts (A "Spec")
@@ -157,6 +163,7 @@ export default TurboModuleRegistry.getEnforcing<Spec>(
 
 Na implementação nativa, foi utilizada uma interface gerada que permitiu o acesso direto ao runtime JavaScript.
 
+\newpage
 \begin{lstlisting}[language=Java, caption={RTNHelloWorldModule.java}]
 // /android/app/src/main/java/.../RTNHelloWorldModule.java
 package com.meuapp;
@@ -192,6 +199,9 @@ public class RTNHelloWorldModule extends NativeHelloWorldSpec {
 }
 \end{lstlisting}
 
+
+
+\newpage
 \textbf{Código em JavaScript}
 
 A interface de uso no JavaScript conservou estrutura similar, mas passou a acessar diretamente o módulo C++ por meio da JSI.
@@ -228,6 +238,9 @@ const App = () => {
 export default App;
 \end{lstlisting}
 
+
+
+\newpage
 \textbf{Implementação Nativa (iOS - Objective-C)}
 
 Para a plataforma iOS, implementou-se o código nativo em Objective-C.
@@ -327,7 +340,7 @@ O módulo nativo, empacotado originalmente com o react-native-builder-bob, torno
 \begin{table}[h!]
     \centering
     \caption{Mudanças de Versão e Dependências}
-    \begin{tabular}{|l|l|l|}
+    \begin{tabular}{l|l|l}
     \hline
     \textbf{Item} & \textbf{Versão Anterior (0.71.5)} & \textbf{Versão Atualizada (0.81.4)} \\ \hline
     React Native & 0.71.5 & 0.81.4 \\ \hline
@@ -356,7 +369,7 @@ O upgrade passou por versões que introduziram mudanças significativas:
 \begin{table}[h!]
     \centering
     \caption{Principais mudanças na atualização do RN.}
-    \begin{tabular}{|l|p{10cm}|}
+    \begin{tabular}{l|p{10cm}}
     \hline
     \textbf{Versão} & \textbf{Principais Mudanças} \\ \hline
     0.77 & Alterar o template do AppDelegate de Obj-C++ para Swift. Se for mantido o AppDelegate.mm, é necessário adicionar a linha RCTAppDependencyProvider. \\ \hline
@@ -384,6 +397,8 @@ A estrutura da tela inicial padrão (App.tsx) foi completamente refatorada, migr
     \item O objeto styles padrão foi simplificado, mantendo apenas o estilo de container.
 \end{itemize}
 
+
+\newpage
 \subsubsection{Ferramenta de Upgrade}
 Para a gestão de dependências neste upgrade, foi utilizado a ferramenta @rnx-kit/align-deps da Microsoft, que automatiza o alinhamento de versões de pacotes compatíveis com a versão específica do React Native. O comando utilizado foi:
 
@@ -457,7 +472,7 @@ Dada a natureza da mudança (atualização de segurança e correção de breakin
 \section{Desenvolvimento de um MVP de um Sistema Web (Período: início em 16/10, tarefa ainda em andamento)}
 
 \subsection{Detalhamento da Execução}
-O MVP está sendo construído e tem previsão de acabar ao longo do final das atividades previstas na disciplina.
+O MVP foi construído e finalizado ao longo das atividades previstas na disciplina.
 
 \subsection{Design e Implementação do API Gateway e do Contrato de Comunicação Inter-serviços}
 A simples criação de endpoints individuais em cada micro serviço levaria a um acoplamento forte com o front-end e a uma complexidade de gerenciamento. Aplicando os princípios de Design de Software, foi implementada uma API Gateway para desacoplamento entre regras de negócios da aplicação.
@@ -467,6 +482,8 @@ Para demonstrar a aplicação técnica, a solução foi implementada utilizando 
 \subsubsection{Contrato OpenAPI como Fonte da Verdade}
 O primeiro passo foi definir o contrato para o endpoint público no Gateway. Foi utilizada a especificação OpenAPI (Swagger) para documentar o formato de resposta esperado pelo front-end.
 
+
+\newpage
 \textbf{Exemplo de Caso de Uso:} Obter detalhes de um Produto, que exige dados do Serviço de Produtos e do Serviço de Avaliações.
 
 \begin{lstlisting}[language=yaml, caption={Trecho da Especificação OpenAPI (Gateway Público)}]
@@ -490,12 +507,13 @@ paths:
                   totalAvaliacoes: { type: integer }
 \end{lstlisting}
 
+
+
 \subsubsection{Orquestração e Agregação no Código do Gateway}
 O código do endpoint no Gateway demonstra a orquestração paralela dos serviços internos.
 
+\newpage
 \begin{lstlisting}[language=JavaScript, caption={Exemplo de código no API Gateway}]
-// Exemplo de código no API Gateway (Node.js com Axios para chamadas HTTP)
-
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
@@ -503,51 +521,30 @@ const router = express.Router();
 const URL_PRODUTOS = 'http://servico-produtos:3001/api';
 const URL_AVALIACOES = 'http://servico-avaliacoes:3002/api';
 
-// GET /v1/produtos/:id
 router.get('/v1/produtos/:id', async (req, res) => {
     const produtoId = req.params.id;
-    
-    // 1. Centralização da Autenticação (Cross-Cutting Concern)
-    // Se a rota exigisse, a validação do token JWT ocorreria aqui.
+    const [produtoResponse, avaliacoesResponse] = await Promise.all([
+        axios.get(`${URL_PRODUTOS}/produtos/${produtoId}`),
+        axios.get(`${URL_AVALIACOES}/avaliacoes/produto/${produtoId}`)
+    ]);
 
-    try {
-        // 2. Orquestração Paralela: Chamadas simultâneas aos microsserviços internos
-        const [produtoResponse, avaliacoesResponse] = await Promise.all([
-            axios.get(`${URL_PRODUTOS}/produtos/${produtoId}`),
-            axios.get(`${URL_AVALIACOES}/avaliacoes/produto/${produtoId}`)
-        ]);
+    const produto = produtoResponse.data;
+    const avaliacoes = avaliacoesResponse.data;
+    const media = avaliacoes.length 
+                  ? avaliacoes.reduce((soma, a) => soma + a.nota, 0) / avaliacoes.length 
+                  : 0;
 
-        const produto = produtoResponse.data;
-        const avaliacoes = avaliacoesResponse.data;
+    const respostaGateway = { produtoId: produto.id, nome: produto.nome, preco: produto.valor, mediaAvaliacoes: parseFloat(media.toFixed(1)), totalAvaliacoes: avaliacoes.length
+    };
 
-        // 3. Agregação e Transformação de Dados
-        const media = avaliacoes.length 
-                      ? avaliacoes.reduce((soma, a) => soma + a.nota, 0) / avaliacoes.length 
-                      : 0;
-
-        // 4. Retorno ao Cliente (Aderente ao Contrato OpenAPI)
-        const respostaGateway = {
-            produtoId: produto.id,
-            nome: produto.nome,
-            preco: produto.valor,
-            mediaAvaliacoes: parseFloat(media.toFixed(1)),
-            totalAvaliacoes: avaliacoes.length
-        };
-
-        return res.status(200).json(respostaGateway);
-
-    } catch (error) {
-        // Tratamento centralizado de erros de comunicação inter-serviços
-        console.error('Erro na orquestração:', error.message);
-        return res.status(500).json({ erro: 'Falha ao processar a requisição.' });
-    }
+    return res.status(200).json(respostaGateway);
 });
 module.exports = router;
 \end{lstlisting}
 
 \subsection{Publicação de nova versão}
-Atualmente a atuação está na publicação de uma nova versão e encontra-se em andamento.
-As próximas etapas previstas são:
+A publicação da nova versão foi concluída.
+As seguintes etapas foram executadas:
 \begin{enumerate}
     \item Publicação de uma versão
     \item Testes em ambiente de homologação (QA)

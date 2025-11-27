@@ -1,10 +1,9 @@
 \section{Estudo de Agentes Conversacionais: Fluxos Determinísticos (Período: 01/11 a 15/11)}
 
-\subsection{Contextualização do Estudo}
-Este estudo teve como objetivo compreender os fundamentos de \textit{Conversational Agents}, focando especificamente em fluxos deterministicos. Os estudos envolveu o aprendizado de como estruturar conversas rígidas e controladas usando Máquinas de Estados Finitas (FSM).
+\subsection{Contextualização da tarefa}
+Esta tarefa teve como objetivo um estudo para compreender os fundamentos de \textit{Conversational Agents}, focando especificamente em fluxos deterministicos. Os estudos envolveu o aprendizado de como estruturar conversas rígidas e controladas usando Máquinas de Estados Finitas (FSM).
 
-\subsection{Objetivos de Aprendizado}
-\textbf{Objetivo Principal:} Desenvolver competências em design de fluxos determinísticos (\textit{Flows}) para processos que exigem alta confiabilidade e auditabilidade.
+\subsection{Objetivos de Aprendizado} Desenvolver competências em design de fluxos determinísticos (\textit{Flows}) para processos que exigem alta confiabilidade e auditabilidade.
 
 O estudo focou em compreender como garantir que cada etapa de um fluxo conversacional seja validada, especialmente em contextos críticos como agendamento médico, onde não pode haver margem para erro ou ambiguidade.
 
@@ -81,7 +80,7 @@ Como parte do estudo, pesquisei metodologias de teste para chatbots, resultando 
 \begin{table}[h!]
     \centering
     \caption{Cenários de Teste Estudados para Validação de Chatbots}
-    \begin{tabular}{|p{0.45\textwidth}|p{0.45\textwidth}|}
+    \begin{tabular}{p{0.45\textwidth}|p{0.45\textwidth}}
         \hline
         \textbf{Cenário de Teste} & \textbf{Comportamento Esperado (Aprendizado)} \\ \hline
         Fluxo completo com dados válidos & Compreender o caminho feliz e geração de confirmações. \\ \hline
@@ -109,11 +108,11 @@ Ao final deste estudo, foram desenvolvidas as seguintes competências:
 
 \section{Estudo de Arquiteturas Híbridas: Fluxos Parcialmente Generativos (Período: 10/11 a 20/11)}
 
-\subsection{Contextualização do Estudo}
-Este estudo investigou a categoria de \textit{Partly Generative Flows}, que combina a segurança dos fluxos determinísticos com a flexibilidade da IA Generativa. A pesquisa focou no uso de \textit{Generators} para enriquecer interações sem perder o controle do fluxo principal.
+\subsection{Contextualização da tarefa}
+Esta tarefa focou em estudar a categoria de \textit{Partly Generative Flows}, que combina a segurança dos fluxos determinísticos com a flexibilidade da IA Generativa. A pesquisa focou no uso de \textit{Generators} para enriquecer interações sem perder o controle do fluxo principal.
 
 \subsection{Objetivos de Aprendizado}
-\textbf{Objetivo Principal:} Desenvolver competências em design de arquiteturas híbridas que utilizam \textit{Generators} e \textit{Generative Fallback} estrategicamente.
+Desenvolver competências em design de arquiteturas híbridas que utilizam \textit{Generators} e \textit{Generative Fallback} estrategicamente.
 
 O estudo explorou como tomar decisões arquiteturais baseadas em análise de risco: operações financeiras exigem fluxos rígidos e auditáveis, enquanto consultas informativas podem aproveitar a flexibilidade da IA generativa.
 
@@ -125,7 +124,7 @@ Estudei metodologias para classificar funcionalidades por nível de risco e dete
 \begin{table}[h!]
     \centering
     \caption{Matriz de Decisão: Paradigma por Nível de Risco}
-    \begin{tabular}{|l|l|l|}
+    \begin{tabular}{l|l|l}
         \hline
         \textbf{Funcionalidade} & \textbf{Nível de Risco} & \textbf{Paradigma Adotado} \\ \hline
         Transferência PIX & Alto (Transacional) & Determinístico (Flows) \\ \hline
@@ -204,13 +203,13 @@ Ao final deste estudo, foram desenvolvidas as seguintes competências:
 
 \section{Estudo de Arquitetura Serverless com GCP Cloud Functions (Período: 15/11 a 25/11)}
 
-\subsection{Contextualização do Estudo}
-Este estudo focou em compreender o paradigma de computação serverless e sua aplicação em integrações de sistemas. A pesquisa envolveu o aprendizado de webhooks, Cloud Functions e padrões de integração entre sistemas conversacionais e APIs legadas.
+\subsection{Contextualização da Tarefa}
+Esta tarefa focou em compreender o paradigma de computação serverless e sua aplicação em integrações de sistemas. A pesquisa envolveu o aprendizado de webhooks, Cloud Functions e padrões de integração entre sistemas conversacionais e APIs legadas.
 
 \subsection{Objetivos de Aprendizado}
 \textbf{Objetivo Principal:} Desenvolver competências em design e implementação de backends serverless para integração de sistemas heterogêneos.
 
-O estudo explorou como webhooks atuam como ponte entre camadas conversacionais (Dialogflow) e APIs internas, executando lógica de negócio e consultas a bancos de dados de forma escalável e eficiente.
+O estudo explorou como webhooks atuam como ponte entre camadas conversacionais (Dialogflow) e APIs internas, executando lógica de negócio e consultas a bancos de dados.
 
 \subsection{Fundamentação Teórica e Prática}
 
@@ -226,71 +225,30 @@ Estudei o padrão arquitetural API Gateway e como Cloud Functions podem atuar co
 \subsubsection{Implementação do Webhook de Rastreamento}
 Para o caso de uso de rastreamento de encomendas em um sistema de logística, implementei a seguinte Cloud Function:
 
+\newpage
 \begin{lstlisting}[language=JavaScript, caption={Webhook para Rastreamento de Encomendas (Node.js)}]
 const axios = require('axios');
-
 exports.dialogflowWebhook = async (req, res) => {
-  try {
-    // 1. Extrair parametros enviados pelo Dialogflow
     const trackingCode = req.body.sessionInfo.parameters.codigo_rastreio;
     
-    // 2. Validacao de entrada
     if (!trackingCode || trackingCode.length < 8) {
       return res.json({
-        fulfillmentResponse: {
-          messages: [{
-            text: { 
-              text: ['Codigo de rastreio invalido. Por favor, informe um codigo valido.'] 
-            }
-          }]
-        }
-      });
-    }
-
-    // 3. Logica de Negocio: Consultar API da Transportadora
+        fulfillmentResponse: { messages: [{ text: {  text: ['Codigo de rastreio invalido'] }}] }});}
+          
     const apiUrl = `https://api.transportadora.com/v1/tracking/${trackingCode}`;
     const response = await axios.get(apiUrl, {
       headers: { 'Authorization': `Bearer ${process.env.API_TOKEN}` },
-      timeout: 5000 // Timeout de 5 segundos
-    });
+      timeout: 5000 // Timeout de 5 segundos});
 
-    const status = response.data;
-    // Exemplo de retorno: { local: "Curitiba", previsao: "2 dias", status: "em_transito" }
+    const status = response.data; // Exemplo de retorno: { local: "Curitiba", previsao: "2 dias", status: "em_transito" }
 
-    // 4. Montar a resposta para o Dialogflow
     const mensagem = `Sua encomenda ${trackingCode} esta em ${status.local}. ` +
                      `Previsao de entrega: ${status.previsao}. ` +
                      `Status: ${status.status}.`;
 
     return res.json({
-      fulfillmentResponse: {
-        messages: [{
-          text: { text: [mensagem] }
-        }]
-      },
-      // 5. Atualizar parametros da sessao (opcional)
-      sessionInfo: {
-        parameters: {
-          ultimo_status: status.status,
-          data_consulta: new Date().toISOString()
-        }
-      }
-    });
-
-  } catch (error) {
-    // 6. Tratamento de erros
-    console.error('Erro ao consultar API de rastreamento:', error.message);
-    
-    return res.status(500).json({
-      fulfillmentResponse: {
-        messages: [{
-          text: { 
-            text: ['Desculpe, nao foi possivel consultar o rastreamento no momento. Tente novamente em alguns instantes.'] 
-          }
-        }]
-      }
-    });
-  }
+      fulfillmentResponse: { messages: [{ text: { text: [mensagem] }}]},
+      sessionInfo: {parameters: {ultimo_status: status.status, data_consulta: new Date().toISOString()}}});
 };
 \end{lstlisting}
 
@@ -321,7 +279,7 @@ A validação foi realizada em múltiplas camadas, conforme evidenciado na Tabel
 \begin{table}[h!]
     \centering
     \caption{Testes de Validação do Webhook de Rastreamento}
-    \begin{tabular}{|p{0.45\textwidth}|p{0.45\textwidth}|}
+    \begin{tabular}{p{0.45\textwidth}|p{0.45\textwidth}}
         \hline
         \textbf{Cenário de Teste} & \textbf{Verificação (Assert)} \\ \hline
         Código de rastreamento válido & A função deve retornar o status correto da API da transportadora. \\ \hline
@@ -350,8 +308,8 @@ Ao final deste estudo, foram desenvolvidas as seguintes competências:
 
 \section{Estudo de RAG com Data Stores e Vertex AI (Período: 20/11 a 24/11)}
 
-\subsection{Contextualização do Estudo}
-Este estudo pincelou o conhecimento sobre a implementação de RAG (Retrieval-Augmented Generation) utilizando a abstração de \textit{Data Stores} do ecossistema Conversational Agents. A pesquisa focou em como conectar agentes a fontes de dados não estruturadas (PDFs, sites) de forma nativa.
+\subsection{Contextualização da tarefa}
+Esta tarefa teve como o foco estudar sobre a implementação de RAG (Retrieval-Augmented Generation) utilizando a abstração de \textit{Data Stores} do ecossistema Conversational Agents. A pesquisa focou em como conectar agentes a fontes de dados não estruturadas (PDFs, sites) de forma nativa.
 
 \subsection{Objetivos de Aprendizado}
 \textbf{Objetivo Principal:} Desenvolver competências em configuração de \textit{Data Stores}, ingestão de documentos e integração com modelos generativos para respostas fundamentadas.
@@ -372,10 +330,10 @@ Estudei o padrão arquitetural RAG e suas etapas fundamentais:
 \end{enumerate}
 
 
-\section{Estudo de Protocolos e Kits de Desenvolvimento para Agentes: ADK e MCP (Período: 10/12 a 20/12)}
+\section{Estudo de Protocolos e Kits de Desenvolvimento para Agentes: ADK e MCP (Período: 10/11 a 20/11)}
 
-\subsection{Contextualização do Estudo}
-A evolução dos chatbots para agentes autônomos exigiu o estudo de novos padrões de interoperabilidade e desenvolvimento. Este estudo focou em duas tecnologias emergentes: o \textit{Agent Development Kit} (ADK) para construção de agentes complexos e o \textit{Model Context Protocol} (MCP) para padronização da conexão entre modelos de IA e fontes de dados externas.
+\subsection{Contextualização da Tarefa}
+Esta tarefa focou em estudar duas tecnologias emergentes: o \textit{Agent Development Kit} (ADK) para construção de agentes complexos e o \textit{Model Context Protocol} (MCP) para padronização da conexão entre modelos de IA e fontes de dados externas.
 
 \subsection{Objetivos de Aprendizado}
 \textbf{Objetivo Principal:} Compreender e implementar padrões modernos de arquitetura de agentes, focando na interoperabilidade e na capacidade de uso de ferramentas (tool use).
@@ -397,53 +355,28 @@ A principal vantagem identificada foi a dissociação: um único servidor MCP (e
 
 \subsubsection{Implementação de um Servidor MCP Simples}
 Para fixar o aprendizado, desenvolvi um servidor MCP em TypeScript que expõe uma base de dados local de produtos para um agente.
-
+\newpage
 \begin{lstlisting}[language=JavaScript, caption={Implementação de Servidor MCP (TypeScript)}]
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 
-// 1. Inicializacao do Servidor
-const server = new Server(
-  { name: "estoque-server", version: "1.0.0" },
-  { capabilities: { tools: {} } }
-);
+const server = new Server( { name: "estoque-server", version: "1.0.0" }, { capabilities: { tools: {} } });
 
-// 2. Definicao da Ferramenta (Tool)
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
-    tools: [{
-      name: "consultar_estoque",
-      description: "Consulta a quantidade disponivel de um produto pelo ID",
-      inputSchema: {
-        type: "object",
-        properties: {
-          produtoId: { type: "string" }
-        },
-        required: ["produtoId"]
-      }
-    }]
-  };
-});
+    tools: [{ name: "consultar_estoque", description: "Consulta a quantidade disponivel de um produto pelo ID", inputSchema: { type: "object", properties: { produtoId: { type: "string" } }, required: ["produtoId"]}}]};});
 
-// 3. Execucao da Ferramenta
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (request.params.name === "consultar_estoque") {
     const { produtoId } = request.params.arguments;
-    // Simulacao de consulta ao banco
     const estoque = db.find(p => p.id === produtoId)?.qtd || 0;
     
-    return {
-      content: [{
-        type: "text",
-        text: `O produto ${produtoId} possui ${estoque} unidades.`
-      }]
-    };
+    return { content: [{ type: "text", text: `O produto ${produtoId} possui ${estoque} unidades.`}]};
   }
   throw new Error("Ferramenta nao encontrada");
 });
 
-// 4. Conexao via Stdio
 const transport = new StdioServerTransport();
 await server.connect(transport);
 \end{lstlisting}
@@ -457,26 +390,8 @@ Explorei frameworks e kits de desenvolvimento (ADK) que facilitam a orquestraç�
     \item \textbf{Execução de Ferramentas:} O uso autônomo de ferramentas expostas via MCP ou APIs.
 \end{itemize}
 
-\subsubsection{Comparativo: Webhooks Tradicionais vs. MCP}
-Realizei uma análise comparativa para entender a evolução arquitetural:
-
-\begin{table}[h!]
-    \centering
-    \caption{Comparativo: Integração via Webhook vs. MCP}
-    \begin{tabular}{|l|l|l|}
-        \hline
-        \textbf{Característica} & \textbf{Webhook (Tradicional)} & \textbf{Protocolo MCP} \\ \hline
-        Acoplamento & Alto (definido no design time) & Baixo (descoberta dinâmica) \\ \hline
-        Reusabilidade & Baixa (específico para um fluxo) & Alta (reusável por vários agentes) \\ \hline
-        Flexibilidade & Rígida (entrada/saída fixa) & Flexível (modelo decide como usar) \\ \hline
-        Manutenção & Complexa (alterar em 2 pontas) & Simples (alterar apenas no server) \\ \hline
-    \end{tabular}
-    \vspace{0.3em}
-    \noindent{\small Fonte: Do próprio autor}
-\end{table}
-
 \subsubsection{Competências Desenvolvidas}
-Ao final deste estudo, foram desenvolvidas as seguintes competências:
+Ao final desta tarefa, foram desenvolvidas as seguintes competências:
 \begin{itemize}
     \item Compreensão da arquitetura de Agentes Autônomos
     \item Implementação de servidores compatíveis com o padrão MCP

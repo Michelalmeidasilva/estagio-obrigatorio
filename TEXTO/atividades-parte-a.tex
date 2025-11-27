@@ -2,28 +2,20 @@
 
 \section{Desenvolvimento de um MVP de um Sistema Web (Período: 30/09 a 25/11)}
 
-\subsection{Detalhamento da Execução}
-O MVP está sendo construído e tem previsão de acabar ao longo do final das atividades previstas na disciplina.
-
-\subsection{Atuação em Tarefas}
-\textbf{Design e Implementação do API Gateway e do Contrato de Comunicação Inter-serviços.}
+\subsection{Tarefa: Design e Implementação do API Gateway e do Contrato de Comunicação entre microsserviços.}
 
 A simples criação de endpoints individuais em cada microsserviço levaria a um acoplamento forte com o front-end e a uma complexidade de gerenciamento. Aplicando os princípios de Design de Software, foi implementada uma API Gateway para desacoplamento entre regras de negócios da aplicação.
 
 \subsection{Execução Baseada em Engenharia de Software}
 \begin{itemize}
-    \item \textbf{Análise de Requisitos:} Em colaboração com a equipe de front-end, mapeei os casos de uso das telas. Isso definiu os dados que o Gateway precisaria agregar.
-    \item \textbf{Design da Arquitetura:} Desenhamos o Gateway como um serviço Node.js simples, cuja única responsabilidade (Princípio 'S' do SOLID) era receber requisições do cliente, orquestrar chamadas para os microsserviços internos e agregar as respostas. Isso desacoplou os clientes da topologia interna da nossa rede de serviços.
-    \item \textbf{Construção e Qualidade:} Definimos um contrato de comunicação claro usando a especificação OpenAPI (Swagger). Isso permitiu que as equipes de front-end e back-end trabalhassem em paralelo, usando o contrato documentado como fonte da verdade. O Gateway também centralizou a lógica de autenticação de rotas e o tratamento de CORS, simplificando os serviços internos. A implementação seguiu padrões de código limpo para garantir a manutenibilidade futura.
+    \item \textbf{Análise de Requisitos:} Em colaboração com a equipe de front-end, foram mapeados os casos de uso das telas. Isso definiu os dados que o Gateway precisaria agregar.
+    \item \textbf{Design da Arquitetura:} Foi desenhado o Gateway como um serviço Node.js simples, cuja única responsabilidade (Princípio 'S' do SOLID) era receber requisições do cliente, orquestrar chamadas para os microsserviços internos e agregar as respostas. Isso desacoplou os clientes da topologia interna da rede de serviços.
+    \item \textbf{Construção e Qualidade:} Foi definido um contrato de comunicação claro usando a especificação OpenAPI (Swagger). Isso permitiu que as equipes de front-end e back-end trabalhassem em paralelo, usando o contrato documentado como fonte da verdade. O Gateway também centralizou a lógica de autenticação de rotas e o tratamento de CORS, simplificando os serviços internos. A implementação seguiu padrões de código limpo para garantir a manutenibilidade futura.
 \end{itemize}
 
 \section{Implementação de Componente de Vídeo (Período: 06/10 a 25/11)}
 
-\subsection{Detalhamento da Execução}
-O componente está em fase final de desenvolvimento, com a lógica central e os testes unitários concluídos. A etapa final, prevista para as próximas Sprints, é a integração do componente nas telas da aplicação.
-
-\subsection{Atuação em Tarefas}
-\textbf{Design, Implementação e Otimização de um Player de Vídeo Reutilizável.}
+\subsection{Tarefa: Design, Implementação e Otimização de um Player de Vídeo Reutilizável.}
 
 A criação de um player de vídeo envolve a construção de uma Máquina de Estados Finita (Finite State Machine - FSM) para gerenciar o ciclo de vida do player, a otimização de performance para evitar gargalos de renderização e a garantia de robustez através de uma suíte de testes completa.
 
@@ -33,7 +25,7 @@ A criação de um player de vídeo envolve a construção de uma Máquina de Est
 Seguindo o princípio de Separação de Responsabilidades e a filosofia da Arquitetura Limpa, a lógica de negócio foi completamente isolada da camada de apresentação (UI).
 
 \begin{itemize}
-    \item \textbf{Custom Hook (useVideoPlayerState):} Criei um custom hook que serve como o "cérebro" do componente. Ele encapsula toda a interação com a API da biblioteca de vídeo (ex: React Player) e gerencia a FSM interna do player.
+    \item \textbf{Custom Hook (useVideoPlayerState):} Foi criado um custom hook que serve como o "cérebro" do componente. Ele encapsula toda a interação com a API da biblioteca de vídeo (ex: React Player) e gerencia a FSM interna do player.
     \item \textbf{Estados da FSM:} O hook gerencia os seguintes estados: IDLE, LOADING, PLAYING, PAUSED, SEEKING, ENDED, ERROR.
     \item \textbf{API Exposta pelo Hook:} O hook retorna um objeto bem definido para o componente de UI, contendo:
     \begin{itemize}
@@ -47,10 +39,9 @@ A performance foi tratada como um requisito fundamental, especialmente em intera
 
 \textbf{Evento onProgress:} Este evento pode disparar múltiplas vezes por segundo, o que, se gerenciado ingenuamente com useState, causaria um excesso de re-renderização no React, sobrecarregando e resultando em uma UI "travada".
 
-\textbf{Solução de Engenharia:}
 \begin{itemize}
-    \item \textbf{Manipulação Direta do DOM para UI:} A atualização visual da barra de progresso, que precisa ser fluida, foi desacoplada do estado do React. Utilizei o hook useRef para obter uma referência direta ao elemento da barra e atualizei seu estilo (transform: scaleX(...)) diretamente, bypassando o ciclo de renderização do React para essa animação específica.
-    \item \textbf{Throttling para o Estado React:} O estado global do React (ex: o texto "01:32 / 05:00") ainda precisava ser atualizado, mas não com a mesma frequência. Implementei uma função de throttle (usando a biblioteca lodash, por exemplo) para garantir que o setState fosse chamado no máximo uma vez a cada 250ms, garantindo a atualização da informação sem sobrecarregar a aplicação.
+    \item \textbf{Manipulação Direta do DOM para UI:} A atualização visual da barra de progresso, que precisa ser fluida, foi desacoplada do estado do React. Foi utilizado o hook useRef para obter uma referência direta ao elemento da barra e atualizar seu estilo (transform: scaleX(...)) diretamente, bypassando o ciclo de renderização do React para essa animação específica.
+    \item \textbf{Throttling para o Estado React:} O estado global do React (ex: o texto "01:32 / 05:00") ainda precisava ser atualizado, mas não com a mesma frequência. Foi implementada uma função de throttle (usando a biblioteca lodash, por exemplo) para garantir que o setState fosse chamado no máximo uma vez a cada 250ms, garantindo a atualização da informação sem sobrecarregar a aplicação.
     \item \textbf{Memoização:} Todos os sub-componentes da UI (ex: <PlayPauseButton />, <VolumeControl />) foram envolvidos em React.memo, e as funções de callback passadas como props foram estabilizadas com useCallback. Isso previne re-renderizações desnecessárias quando o estado pai muda, mas as props específicas daquele componente filho permanecem as mesmas.
 \end{itemize}
 
@@ -60,7 +51,7 @@ A qualidade e a robustez do componente foram garantidas através de testes unit�
 \begin{table}[h!]
     \centering
     \caption{Testes unitários na Implementação de Componente de Vídeo}
-    \begin{tabular}{|p{0.45\textwidth}|p{0.45\textwidth}|}
+    \begin{tabular}{p{0.45\textwidth}|p{0.45\textwidth}}
         \hline
         \textbf{Objetivo} & \textbf{Verificação (Assert)} \\ \hline
         Garantir que o hook inicie no estado correto & O estado inicial isPlaying deve ser false, progress deve ser 0, isLoading deve ser true (ou false, dependendo da estratégia de autoplay). \\ \hline
@@ -76,64 +67,58 @@ A qualidade e a robustez do componente foram garantidas através de testes unit�
     \noindent{\small Fonte: Do próprio autor}
 \end{table}
 
-\textbf{Tarefa ainda não finalizada:} Necessário a integração dentro das telas que farão o uso do componente. Esta próxima fase envolverá a passagem das props necessárias (como a URL do vídeo) e a conexão de callbacks (como onEnded) com a lógica de negócio da página que o contém.
+A integração dentro das telas que fazem uso do componente foi finalizada. Esta fase envolveu a passagem das props necessárias (como a URL do vídeo) e a conexão de callbacks (como onEnded) com a lógica de negócio da página que o contém.
 
 \section{Estudos de Viabilidade Técnica para Funcionalidades de Vídeos com interatividades}
 
 \subsection{Detalhamento da Execução}
 Os estudos foram focados em gerar conhecimento técnico e reduzir riscos de negócio e implementação.
 
-\subsection{Atuação em Tarefas (Visão de Engenharia de Software)}
-\textbf{Tarefa: Análise de Trade-offs Arquiteturais para a Solução de vídeos interativos com hotspots.}
+\subsection{Tarefa: Análise de Trade-offs Arquiteturais para a Solução de vídeos interativos com hotspots.}
 
 O estudo técnico envolve uma profunda análise de engenharia de sistemas, considerando custos, escalabilidade e manutenibilidade. Minha tarefa foi fornecer à liderança um relatório técnico para uma decisão informada.
 
 \subsection{Execução}
 \begin{itemize}
-    \item \textbf{Análise de Requisitos Não-Funcionais:} Foi definido os critérios de avaliação: latência, escalabilidade , custo por espectador/hora e complexidade de manutenção.
-    \item \textbf{Relatório Técnico e Recomendação:} Nele, apresentei a análise comparativa e recomendei a abordagem, alinhando a solução técnica com os objetivos de negócio (velocidade de lançamento), com um plano para reavaliar a estratégia se a escala crescesse exponencialmente.
+    \item \textbf{Análise de Requisitos Não-Funcionais:} Foram definidos os critérios de avaliação: latência, escalabilidade , custo por espectador/hora e complexidade de manutenção.
+    \item \textbf{Relatório Técnico e Recomendação:} Nele, foi apresentada a análise comparativa e recomendada a abordagem, alinhando a solução técnica com os objetivos de negócio (velocidade de lançamento), com um plano para reavaliar a estratégia se a escala crescesse exponencialmente.
 \end{itemize}
 
 \section{Implementação de Lógicas para Descontos (Período: 04/10 a 06/11)}
 
-\subsection{Detalhamento da Execução}
-Foco total em refatoração segura e melhoria da qualidade de um módulo crítico e legado.
 
-\subsection{Atuação em Tarefas}
-\textbf{Tarefa: Garantia de Qualidade e Prevenção de Regressão em Código Legado Crítico.}
-
-Foi modificado um código complexo em um sistema legado e monolítico, sem testes e com alto impacto no negócio (cálculo de preços), sendo uma tarefa de risco, a prioridade absoluta foi garantir que o comportamento existente não fosse quebrado.
+\subsection{Tarefa: Garantia de Qualidade e Prevenção de Regressão em Código Legado Crítico.}
+Foi modificado  um sistema legado e monolítico, sem testes e com alto impacto no negócio (cálculo de preços), sendo uma tarefa de risco, a prioridade absoluta foi garantir que o comportamento existente não fosse quebrado.
 
 \subsection{Execução Baseada em Engenharia de Software}
 \begin{itemize}
-    \item \textbf{Engenharia Reversa e Testes de Caracterização:} Antes de alterar uma única linha, apliquei a técnica de Testes de Caracterização. Criei uma suíte de testes que não validava o que o código deveria fazer, mas o que ele realmente fazia, incluindo seus comportamentos inesperados. Isso criou uma rede de segurança que "caracterizou" o comportamento do sistema.
-    \item \textbf{Refatoração Baseada em Padrões:} Com a segurança dos testes, liderei a refatoração. O código original era uma violação do Princípio Aberto/Fechado (para adicionar um novo desconto, era preciso modificar a função existente). Implementamos o Strategy Pattern, onde cada lógica de desconto se tornou uma classe separada com uma interface comum. A função principal agora apenas selecionava a "estratégia" correta, sem precisar conhecer seus detalhes.
+    \item \textbf{Engenharia Reversa e Testes de Caracterização:} Antes de alterar o código, foi aplicada a técnica de Testes de Caracterização. Foi criada uma suíte de testes que não validava o que o código deveria fazer, mas o que ele realmente fazia, incluindo seus comportamentos inesperados. Isso criou uma rede de segurança que "caracterizou" o comportamento do sistema.
+    \item \textbf{Refatoração Baseada em Padrões:} Com a segurança dos testes, foi liderada a refatoração. O código original era uma violação do Princípio Aberto/Fechado (para adicionar um novo desconto, era preciso modificar a função existente). Foi implementado o Strategy Pattern, onde cada lógica de desconto se tornou uma classe separada com uma interface comum. A função principal agora apenas seleciona a "estratégia" correta, sem precisar conhecer seus detalhes.
     \item \textbf{Manutenibilidade:} A nova arquitetura tornou-se aberta para extensão (bastava criar uma nova classe de estratégia) e fechada para modificação, garantindo a manutenibilidade e a segurança para futuras alterações.
 \end{itemize}
 
-\textbf{Tarefa ainda não finalizada:} Necessário a criação de mais testes, a validação da tarefa em conjunto com o time de qualidade e a realização do deploy.
+Foram criados os testes necessários, realizada a validação da tarefa em conjunto com o time de qualidade e executado o deploy.
 
 \section{Implementação de Funcionalidade para Imagens no Website (Período: 25/09 a 15/10)}
 
 \subsection{Detalhamento da Execução}
 Entregue de forma incremental, com foco inicial na funcionalidade e posterior na otimização de performance.
 
-\subsection{Atuação}
-\textbf{Tarefa: Otimização de Performance e Métricas de Core Web Vitals (CWV).}
+\subsection{Tarefa: Otimização de Performance e Métricas de Core Web Vitals (CWV).}
 
 Minha atuação como engenheiro foi focada em garantir que a funcionalidade não degradasse as métricas de performance (LCP, CLS), que impactam diretamente a experiência do usuário e o ranking no Google.
 
 \subsection{Execução Baseada em Engenharia de Software}
 \begin{itemize}
-    \item \textbf{Análise e Diagnóstico:} Utilizei ferramentas de profiling (Lighthouse, Chrome DevTools) para medir o impacto da implementação inicial. O diagnóstico foi claro: o carregamento de múltiplas imagens de alta resolução estava atrasando o LCP (Largest Contentful Paint) e o carregamento tardio causava CLS (Cumulative Layout Shift).
+    \item \textbf{Análise e Diagnóstico:} Foram utilizadas ferramentas de profiling (Lighthouse, Chrome DevTools) para medir o impacto da implementação inicial. O diagnóstico foi claro: o carregamento de múltiplas imagens de alta resolução estava atrasando o LCP (Largest Contentful Paint) e o carregamento tardio causava CLS (Cumulative Layout Shift).
     \item \textbf{Otimização Estrutural:} Apliquei uma abordagem multifacetada:
     \begin{itemize}
-        \item Usei o componente <Image> do Next.js, que automaticamente serve imagens em formatos modernos (WebP) e tamanhos otimizados.
-        \item Adicionei a prop priority na primeira imagem do carrossel. Isso é uma diretiva de engenharia que sinaliza ao navegador para priorizar o download deste recurso, melhorando diretamente o LCP.
-        \item Para as demais imagens, implementei lazy loading, fazendo com que fossem carregadas apenas quando se aproximasse do viewport.
-        \item Para resolver o CLS, especifiquei as dimensões exatas de cada imagem, para que o navegador pudesse reservar o espaço em tela antes do download ser concluído, evitando o "salto" no layout.
+        \item Foi usado o componente <Image> do Next.js, que automaticamente serve imagens em formatos modernos (WebP) e tamanhos otimizados.
+        \item Foi adicionada a prop priority na primeira imagem do carrossel. Isso é uma diretiva de engenharia que sinaliza ao navegador para priorizar o download deste recurso, melhorando diretamente o LCP.
+        \item Para as demais imagens, foi implementado lazy loading, fazendo com que fossem carregadas apenas quando se aproximasse do viewport.
+        \item Para resolver o CLS, foram especificadas as dimensões exatas de cada imagem, para que o navegador pudesse reservar o espaço em tela antes do download ser concluído, evitando o "salto" no layout.
     \end{itemize}
-    \item \textbf{Validação:} Após as otimizações, rodei novamente as ferramentas de profiling para validar que as métricas de CWV estavam dentro dos limites recomendados, tratando a performance como um requisito funcional do projeto.
+    \item \textbf{Validação:} Após as otimizações, foram executadas novamente as ferramentas de profiling para validar que as métricas de CWV estavam dentro dos limites recomendados, tratando a performance como um requisito funcional do projeto.
     \item \textbf{Publicação de nova versão:} A versão foi publicada com as alterações, este deploy ocorreu no período da noite por conta dos riscos de serem realizados durante o dia.
     \item \textbf{Testes unitários realizados:} Através dos testes unitários, na Tabela \ref{tab:testes_imagens}, são evidenciados os critérios de assertividade da funcionalidade para garantir a integridade e a qualidade em ambiente local de desenvolvimento. Estes mesmos testes são executados antes do deploy da aplicação.
 \end{itemize}
@@ -141,7 +126,7 @@ Minha atuação como engenheiro foi focada em garantir que a funcionalidade não
 \begin{table}[h!]
     \centering
     \caption{Testes unitários na Implementação de Funcionalidade para Imagens no Website}
-    \begin{tabular}{|p{0.45\textwidth}|p{0.45\textwidth}|}
+    \begin{tabular}{p{0.45\textwidth}|p{0.45\textwidth}}
         \hline
         \textbf{Objetivo} & \textbf{Verificação (Assert)} \\ \hline
         Validar a renderização inicial do componente. & Verificar se o número de elementos de imagem renderizados no DOM é igual ao tamanho do array passado na prop 'images'. \\ \hline
@@ -160,8 +145,7 @@ Minha atuação como engenheiro foi focada em garantir que a funcionalidade não
 \section{Atualização da versão do React Native (Período: 25/09 a 15/10)}
 Uma atividade de alto risco focada em gerenciamento de débito técnico e configuração de ambiente.
 
-\subsection{Atuação em Tarefas}
-\textbf{Gerenciamento de Dependências Nativas Conflitantes e do Processo de Build.}
+\subsection{Tarefa: Gerenciamento de Dependências Nativas Conflitantes e do Processo de Build.}
 
 A complexidade de uma atualização do React Native está no código JavaScript, e também no ecossistema nativo subjacente. É uma tarefa de Engenharia de Configuração dos componentes nativos, atualização de bibliotecas do React-Native e correção de builds. Na Tabela \ref{tab:alteracoes_rn}, estão as alterações após a migração da versão anterior para a nova atualização da versão 0.81.
 
@@ -169,9 +153,9 @@ A complexidade de uma atualização do React Native está no código JavaScript,
 \begin{itemize}
     \item \textbf{Análise de Risco e Planejamento Estratégico:}
     \begin{itemize}
-        \item \textbf{Análise de Breaking Changes:} Antes de iniciar, utilizei a ferramenta oficial react-native-upgrade-helper. Ela fornece um diff detalhado entre as versões, mostrando todas as alterações necessárias em arquivos de template nativos e de configuração, o que foi crucial para estimar o esforço e os pontos de risco.
-        \item \textbf{Mapeamento de Dependências:} Criei um inventário de todas as bibliotecas de terceiros, verificando seus changelogs e issues no GitHub para confirmar a compatibilidade com a nova versão do React Native.
-        \item \textbf{Plano de Execução:} Defini um plano em uma branch Git isolada (feature/upgrade-rn-0.xx), que incluía um plano de rollback claro: a qualquer momento, se um impedimento intransponível fosse encontrado, a branch seria descartada, garantindo zero impacto na main branch.
+        \item \textbf{Análise de Breaking Changes:} Antes de iniciar, foi utilizada a ferramenta oficial react-native-upgrade-helper. Ela fornece um diff detalhado entre as versões, mostrando todas as alterações necessárias em arquivos de template nativos e de configuração, o que foi crucial para estimar o esforço e os pontos de risco.
+        \item \textbf{Mapeamento de Dependências:} Foi criado um inventário de todas as bibliotecas de terceiros, verificando seus changelogs e issues no GitHub para confirmar a compatibilidade com a nova versão do React Native.
+        \item \textbf{Plano de Execução:} Foi definido um plano em uma branch Git isolada (feature/upgrade-rn-0.xx), que incluía um plano de rollback claro: a qualquer momento, se um impedimento intransponível fosse encontrado, a branch seria descartada, garantindo zero impacto na main branch.
     \end{itemize}
     \item \textbf{Gerenciamento de Build Nativo:} A atualização quebrou as configurações do Gradle (Android) e do CocoaPods (iOS). Meu trabalho foi mergulhar nesses ecossistemas nativos, entender as breaking changes e aplicar as correções manualmente, o que exigiu conhecimento de android nativo.
     \item \textbf{Solução de Conflitos de Dependências:} O problema mais crítico foi uma biblioteca de SDK com a Google que dependia de uma versão antiga de uma biblioteca nativa do Android, enquanto a nova versão do React Native exigia uma mais recente. A solução de engenharia foi usar as ferramentas do react-native para realizar uma atualização pontual, através de um patch, e então aplicar esse ajuste no código da biblioteca da Google (usando patch-package) para torná-la compatível.
@@ -182,7 +166,7 @@ A complexidade de uma atualização do React Native está no código JavaScript,
 \begin{table}[h!]
     \centering
     \caption{Alterações após migração da versão do React-native}
-    \begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+    \begin{tabular}{p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}}
         \hline
         \textbf{Ponto de Alteração} & \textbf{Descrição Técnica da Mudança} & \textbf{Solução} \\ \hline
         Atualização do Android Gradle & A nova versão do React Native exige uma versão mais recenteo Gradle. Isso implicou em atualizar as dependências no build.gradle do projeto e a URL de distribuição no gradle-wrapper.properties. & A nova versão do AGP introduziu breaking changes na sintaxe do build.gradle, especialmente na forma como as buildFeatures e o namespace são declarados. Solução: Foi necessário a atualização do gradle \\ \hline
@@ -198,7 +182,7 @@ A complexidade de uma atualização do React Native está no código JavaScript,
 \begin{table}[h!]
     \centering
     \caption{Testes unitários na Atualização da versão do React Native}
-    \begin{tabular}{|p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}|}
+    \begin{tabular}{p{0.3\textwidth}|p{0.3\textwidth}|p{0.3\textwidth}}
         \hline
         \textbf{Tipo de Teste} & \textbf{Ferramentas/Método} & \textbf{Verificação (Assert)} \\ \hline
         Smoke Test (Manual) & Build de Teste (APK/IPA) & A aplicação abre sem crashar após a instalação limpa em um dispositivo físico com Android 14 e iOS 17. \\ \hline

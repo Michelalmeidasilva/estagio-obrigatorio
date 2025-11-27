@@ -40,6 +40,7 @@
 %   * openright  -- força início de capítulos em páginas ímpares (padrão da biblioteca)
 %   * oneside    -- desliga frente-e-verso
 %   * final      -- versão final do texto
+% 
 
 % Programas de pós-graduação com mais de uma área de concentração devem declarar explicitamente
 % a área de concentração da dissertação ou tese, por meio do comando
@@ -119,7 +120,7 @@
 
 \begin{document}
 
-\includepdf[pages=-]{inicio.pdf}
+\includepdf[pages=-]{primeiras-paginas.pdf}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,42 +142,7 @@
 
 
  
-%
-% O arquivo de formatação abntex2-alf.bst coloca todas as entradas no formato correto.
-%
 
-\bibliographystyle{abntex2-alf}
-\bibliography{TEXTO/TEXTO-Bibliografia}
-
-%\chapter*{Glossário}
-
-%O glossário é opcional. Se precisar, consulte o manual da biblioteca sobre o seu formato adequado.
-
-\begin{figure}[h]
-    \begin{flushright} 
-    
-        \includegraphics[width=1\textwidth]{IMAGENS/identificação-supervisor-estagio-empresa.png}
-    \end{flushright}
-\end{figure}
-
-
-\begin{figure}[h]
-    \begin{flushright} 
-    
-        \includegraphics[width=1\textwidth]{IMAGENS/identificação-orientador-estagio.png}
-    \end{flushright}
-\end{figure}
-%
-
-
-\begin{figure}[h]
-    \begin{flushright} 
-    
-        \includegraphics[width=1\textwidth]{IMAGENS/atividades-desenvolvidas-relatoriofinal.png}
-    \end{flushright}
-\end{figure}
-%
-%
 
 \newpage
 
@@ -184,257 +150,109 @@
 
 \chapter{Referencial Teórico}
 
-As bases técnicas que nortearam a execução das atividades foram a adoção de quatro pilares fundamentais: uma arquitetura de microsserviços, a aplicação dos princípios SOLID, a utilização de um Design System e  diferentes linguagens e frameworks. Essa combinação permitiu a entrega de produtos e funcionalidades de forma incremental, consistente e evolutiva, conforme preconizado pelo Manifesto Ágil \cite{agile}.
+As bases técnicas que nortearam a execução das atividades foram a adoção de quatro pilares fundamentais: uma arquitetura de microsserviços, a aplicação dos princípios SOLID, a utilização de um Design System e diferentes linguagens e frameworks. Essa combinação permitiu a entrega de produtos e funcionalidades de forma incremental, consistente e evolutiva, conforme preconizado pelo Manifesto Ágil \cite{agile}.
 
-\section{Scrum}
-É um dos frameworks mais populares para a implementação de desenvolvimento ágil. Ele é projetado para que equipes possam entregar valor ao cliente de forma incremental e iterativa \cite{scrum}.
+\section{Conceitos e Metodologias de Desenvolvimento}
 
-\section{Engenharia de Software}
-É a aplicação de uma abordagem sistemática, disciplinada e quantificável para o desenvolvimento, operação e manutenção de software \cite{pressman}.
-
-\section{Arquitetura de Microsserviços}
-É um padrão de arquitetura onde uma aplicação complexa é composta por um conjunto de serviços pequenos e independentes, cada um responsável por uma capacidade de negócio específica e comunicando-se através de APIs \cite{microservices}.
-
-\section{Princípios SOLID}
-É um acrônimo para cinco princípios de design de software que visam tornar o código mais compreensível, flexível e manutenível \cite{cleanarch}.
+Para garantir a qualidade e a manutenibilidade do software, foram adotados os seguintes conceitos e metodologias:
 
 \begin{description}
-    \item[S] Single Responsibility Principle
-    \item[O] Open/Closed Principle
-    \item[L] Liskov Substitution Principle
-    \item[I] Interface Segregation Principle
-    \item[D] Dependency Inversion Principle
+    \item[Engenharia de Software:] É a aplicação de uma abordagem sistemática, disciplinada e quantificável para o desenvolvimento, operação e manutenção de software \cite{pressman}.
+    \item[Metodologia Ágil:] É uma abordagem iterativa para o gerenciamento de projetos e desenvolvimento de software que ajuda as equipes a entregar valor aos seus clientes de forma mais rápida e com menos dores de cabeça.
+    \item[Scrum:] É um dos frameworks mais populares para a implementação de desenvolvimento ágil. Ele é projetado para que equipes possam entregar valor ao cliente de forma incremental e iterativa \cite{scrum}.
+    \item[Código Limpo (Clean Code):] É uma filosofia de desenvolvimento de software popularizada por Robert C. Martin ("Uncle Bob"). A premissa é que o código deve ser escrito de forma simples, direta e legível, como uma prosa bem escrita. Suas características incluem o uso de nomes significativos para variáveis e funções, funções pequenas com responsabilidades únicas e a minimização de complexidade.
+    \item[Arquitetura Limpa (Clean Architecture):] Também concebida por Robert C. Martin, é um modelo de design de software que impõe uma rigorosa separação de responsabilidades. A arquitetura é representada por círculos concêntricos, onde a regra principal é a Regra da Dependência: as dependências do código-fonte só podem apontar para dentro. Nada em um círculo interno pode saber qualquer coisa sobre um círculo externo.
+    \item[Princípios SOLID:] É um acrônimo para cinco princípios de design de software que visam tornar o código mais compreensível, flexível e manutenível \cite{cleanarch}:
+    \begin{itemize}
+        \item \textbf{S} - Single Responsibility Principle
+        \item \textbf{O} - Open/Closed Principle
+        \item \textbf{L} - Liskov Substitution Principle
+        \item \textbf{I} - Interface Segregation Principle
+        \item \textbf{D} - Dependency Inversion Principle
+    \end{itemize}
+    \item[Design Patterns (Padrões de Projeto):] São soluções gerais e reutilizáveis para problemas frequentes no desenvolvimento de software. Popularizados pelo "Gang of Four" (GoF), são categorizados em:
+    \begin{itemize}
+        \item \textbf{Criação:} Abstraem o processo de instanciação de objetos (ex: Factory, Singleton).
+        \item \textbf{Estruturais:} Combinam classes e objetos para formar estruturas maiores (ex: Adapter, Decorator).
+        \item \textbf{Comportamentais:} Tratam da comunicação e responsabilidades entre objetos (ex: Strategy, Observer).
+    \end{itemize}
 \end{description}
 
-\section{Design System (Sistema de Design)}
-É a fonte única da verdade que agrupa todos os elementos que permitem às equipes projetar e desenvolver um produto de forma coesa e escalável \cite{designsystem}.
+\section{Arquitetura de Software}
 
-\subsection{O Pulso, Design System da RD Saúde}
-O "Pulso" materializa o conceito de Design System ao prover Tokens de Design (cores, tipografia), uma biblioteca de Componentes reutilizáveis e Documentação Técnica. Seu objetivo é "proporcionar uma base sólida para que designers e desenvolvedores possam criar produtos e experiências com qualidade, coesão e alinhamento", garantindo consistência e produtividade.
-
-\section{Node.js (Ambiente de Execução Back-end)}
-É um ambiente de execução (runtime) de JavaScript assíncrono, construído sobre o motor V8 do Google Chrome. Ele permite a execução de código JavaScript no lado do servidor \cite{nodejs}.
-
-\subsection{Estrutura e Funcionamento}
-Seu principal diferencial é o modelo de I/O (Entrada/Saída) não bloqueante, orientado a eventos. Através do Event Loop, o Node.js consegue lidar com um grande número de conexões simultâneas de forma eficiente, delegando operações demoradas (como consultas a banco de dados ou chamadas de API) e executando outras tarefas enquanto aguarda a resposta. Isso o torna ideal para a construção de microsserviços e APIs de alta performance.
-
-\section{Next.js (Framework Web Front-end)}
-É um framework React para a construção de aplicações web de produção. Ele estende o React com uma estrutura robusta para renderização, roteamento e otimizações de performance \cite{nextjs}.
-
-\subsection{Estrutura e Funcionamento}
-Next.js é conhecido por seu sistema de roteamento baseado em arquivos e suas múltiplas estratégias de renderização: SSR (Server-Side Rendering), que gera o HTML da página no servidor a cada requisição, ideal para SEO e conteúdo dinâmico; e SSG (Static Site Generation), que gera o HTML em tempo de compilação (build), oferecendo performance máxima para páginas estáticas.
-
-\section{Metodologia Ágil}
-É uma abordagem iterativa para o gerenciamento de projetos e desenvolvimento de software que ajuda as equipes a entregar valor aos seus clientes de forma mais rápida e com menos dores de cabeça.
-
-\section{Código Limpo (Clean Code)}
-É uma filosofia de desenvolvimento de software popularizada por Robert C. Martin ("Uncle Bob"). A premissa é que o código deve ser escrito de forma simples, direta e legível, como uma prosa bem escrita. Suas características incluem o uso de nomes significativos para variáveis e funções, funções pequenas com responsabilidades únicas e a minimização de complexidade. 
-
-\section{Arquitetura Limpa (Clean Architecture)}
-Também concebida por Robert C. Martin, é um modelo de design de software que impõe uma rigorosa separação de responsabilidades. A arquitetura é representada por círculos concêntricos, onde a regra principal é a Regra da Dependência: as dependências do código-fonte só podem apontar para dentro. Nada em um círculo interno pode saber qualquer coisa sobre um círculo externo. Isso cria um sistema:
-
-\section{Design Patterns (Padrões de Projeto)}
-São soluções gerais e reutilizáveis para problemas que ocorrem com frequência no desenvolvimento de software. Eles não são códigos prontos, mas sim modelos ou descrições de como resolver um problema que pode ser usado em muitas situações diferentes. Popularizados pelo livro "Design Patterns: Elements of Reusable Object-Oriented Software" (do grupo "Gang of Four" ou GoF), eles são categorizados em:
-
-\begin{itemize}
-    \item \textbf{Criação (Creational):} Abstraem o processo de instanciação de objetos (ex: Factory, Singleton).
-    \item \textbf{Estruturais (Structural):} Descrevem como classes e objetos podem ser combinados para formar estruturas maiores e mais complexas (ex: Adapter, Decorator).
-    \item \textbf{Comportamentais (Behavioral):} Tratam da comunicação e da atribuição de responsabilidades entre objetos (ex: Strategy, Observer).
-\end{itemize}
-
-\section{Arquitetura Monolítica}
-É o modelo tradicional de arquitetura de software, no qual uma aplicação é construída como uma única unidade coesa e indivisível. Todos os seus componentes (interface do usuário, lógica de negócio, acesso a dados) são fortemente acoplados e executados como um único serviço.
-
-\section{Chrome DevTools}
-É um conjunto de ferramentas de desenvolvimento web embutido no navegador Google Chrome. Permite inspecionar o DOM e CSS (painel Elements), depurar JavaScript (painel Sources), monitorar requisições de rede (painel Network) e analisar a performance de renderização da página (painel Performance). 
-
-\section{Lighthouse}
-É uma ferramenta de auditoria automatizada de código aberto do Google, integrada ao DevTools. Ela avalia a qualidade de uma página web com base em cinco categorias principais: Performance, Acessibilidade, Boas Práticas, SEO e Progressive Web App (PWA). 
-
-\section{Web Vitals}
-É uma iniciativa do Google para fornecer um conjunto unificado de métricas de qualidade, focadas em quantificar a experiência do usuário na web.
-
-\subsection{Core Web Vitals (CWV)}
-São um subconjunto dos Web Vitals que o Google considera essenciais para todas as páginas. Eles medem três aspectos da experiência do usuário: carregamento, interatividade e estabilidade visual. Atualmente, os três pilares dos CWV são:
+A arquitetura do sistema evoluiu de modelos tradicionais para abordagens mais modernas e distribuídas.
 
 \begin{description}
-    \item[LCP (Largest Contentful Paint):] Mede a performance de carregamento. É o tempo que o maior elemento de conteúdo (imagem ou bloco de texto) leva para se tornar visível na tela. Uma boa experiência deve ter um LCP de até 2,5 segundos.
-    \item[CLS (Cumulative Layout Shift):] Mede a estabilidade visual. Quantifica o total de saltos inesperados de layout que ocorrem durante o carregamento da página. Uma boa experiência deve ter um CLS de 0.1 ou menos.
-    \item[INP (Interaction to Next Paint):] Mede a interatividade. Avalia a latência de todas as interações do usuário com a página, reportando o pior valor. Uma boa experiência deve ter um INP abaixo de 200 milissegundos. Essas métricas são um fator relevante para o ranking de busca do Google.
+    \item[Arquitetura Monolítica:] Modelo tradicional onde a aplicação é uma única unidade coesa. Todos os componentes (UI, lógica, dados) são fortemente acoplados.
+    \item[Arquitetura de Microsserviços:] Padrão onde uma aplicação complexa é composta por serviços pequenos e independentes, cada um com uma capacidade de negócio específica, comunicando-se via APIs \cite{microservices}.
+    \item[Computação Serverless:] Permite construir e executar aplicações sem gerenciar servidores.
+    \begin{itemize}
+        \item \textbf{Cloud Functions:} Funções de propósito único, orientadas a eventos, que escalam automaticamente.
+    \end{itemize}
+    \item[O Padrão API Gateway:] Atua como ponto único de entrada para requisições, encapsulando a estrutura interna de microsserviços. Seus benefícios incluem desacoplamento, orquestração de dados e centralização de funcionalidades transversais (autenticação, logging).
 \end{description}
 
-\section{React}
-É uma biblioteca JavaScript de código aberto, mantida pelo Facebook, para a construção de interfaces de usuário (UI). Seu principal paradigma é a criação de UIs de forma declarativa e baseada em componentes. Em vez de dizer ao navegador como manipular o DOM, o desenvolvedor declara como a UI deve se parecer em diferentes estados, e o React se encarrega de atualizar o DOM de forma eficiente através de um mecanismo chamado Virtual DOM \cite{react}.
+\section{Tecnologias de Desenvolvimento}
 
-\subsection{Conceitos Fundamentais do React}
-\begin{itemize}
-    \item \textbf{Componentes:} São peças de código isoladas e reutilizáveis que rendem uma parte da UI. 
-    \item \textbf{Reatividade:}  A UI "reage" automaticamente a mudanças nos dados da aplicação (o "estado"). Quando o estado de um componente muda, o React automaticamente re-renderiza aquele componente e seus filhos para refletir a nova informação.
-    \item \textbf{Gerenciamento de Estados (State Management):} O "estado" (state) é um objeto que armazena os dados de um componente que podem mudar ao longo do tempo. O React fornece mecanismos para gerenciar o estado local de um componente (Hook useState) e também para compartilhar estado entre múltiplos componentes (Hook useContext ou bibliotecas externas como Redux e Zustand).
-    \item \textbf{Hooks:} São funções especiais que permitem serem chamadas nos recursos de estado e ciclo de vida do React a partir de componentes de função. useState para adicionar estado, useEffect para lidar com efeitos colaterais (como chamadas de API) e useContext para acessar dados globais são alguns dos Hooks mais utilizados.
-    \item \textbf{Roteamento (Routing):} Em uma Single-Page Application (SPA) construída com React, o roteamento é o processo de navegar entre diferentes "páginas" sem recarregar o navegador. Isso é gerenciado por bibliotecas como o React Router ou por frameworks como o Next.js, que possuem um sistema de roteamento integrado.
-\end{itemize}
+\subsection{Desenvolvimento Web}
 
-\section{Ecossistema Android (Nativo)}
-É um sistema operacional móvel de código aberto baseado no Kernel Linux, mantido primariamente pelo Google. Sua natureza aberta permite que seja modificado e distribuído por diversos fabricantes de hardware, resultando em um ecossistema de dispositivos vastos e heterogêneos.
+\begin{description}
+    \item[Node.js:] Ambiente de execução JavaScript assíncrono construído sobre o motor V8. Seu modelo de I/O não bloqueante o torna ideal para microsserviços e APIs de alta performance \cite{nodejs}.
+    \item[React:] Biblioteca JavaScript para construção de interfaces de usuário baseada em componentes e declarativa. Utiliza o Virtual DOM para atualizações eficientes \cite{react}. Conceitos chave incluem Componentes, Reatividade, Gerenciamento de Estados e Hooks.
+    \item[Next.js:] Framework React para produção que oferece renderização híbrida (SSR e SSG) e sistema de roteamento baseado em arquivos \cite{nextjs}.
+\end{description}
 
-\subsection{Linguagens de Programação}
-Atualmente, Kotlin é a linguagem oficial e recomendada pelo Google. Kotlin é totalmente interoperável com Java, mas oferece vantagens como sintaxe mais concisa, segurança contra nulos (null safety) e funcionalidades modernas que aumentam a produtividade e a segurança do código. Anteriormente o desenvolvimento era prioritariamente realizado em Java. 
+\subsection{Desenvolvimento Mobile}
 
-\subsection{Arquitetura e Componentes}
-Uma aplicação Android é estruturada em componentes fundamentais, como Activities (representam uma tela da UI), Services (para operações em segundo plano), Broadcast Receivers (para responder a eventos do sistema) e Content Providers (para compartilhar dados).
+\begin{description}
+    \item[Ecossistema Android:] Sistema operacional móvel baseado em Linux. O desenvolvimento moderno utiliza Kotlin (interoperável com Java) e o sistema de build Gradle.
+    \item[Ecossistema iOS:] Sistema proprietário da Apple. O desenvolvimento utiliza Swift (sucessor do Objective-C) e gerenciamento de dependências via Swift Package Manager ou CocoaPods.
+    \item[React Native:] Framework para desenvolvimento multiplataforma usando JavaScript e React \cite{reactnative}.
+    \begin{itemize}
+        \item \textbf{Arquitetura Legada (Bridge):} Comunicação assíncrona e serializada (JSON) entre JavaScript e Nativo.
+        \item \textbf{Nova Arquitetura (JSI/Fabric/TurboModules):} Permite comunicação síncrona e direta (C++) entre JavaScript e Nativo, eliminando a "ponte" e melhorando a performance.
+        \item \textbf{Ferramentas:} \textit{React-native-builder-bob} para criação de bibliotecas e \textit{Upgrade Helper} para migração de versões.
+    \end{itemize}
+\end{description}
 
-\subsection{Gerenciamento de Build}
-O sistema de build oficial é o Gradle, uma ferramenta de automação que compila o código, gerência dependências de bibliotecas (via repositórios como Maven Central) e empacota a aplicação nos formatos APK ou AAB (Android App Bundle) para distribuição.
+\section{Design e Qualidade de Software}
 
-\subsection{Distribuição}
-A principal plataforma de distribuição é a Google Play Store.
+\begin{description}
+    \item[Design System:] Fonte única de verdade para design e desenvolvimento. O "Pulso" (RD Saúde) provê tokens, componentes e documentação para garantir consistência.
+    \item[Chrome DevTools:] Ferramentas de desenvolvimento embutidas no Chrome para inspeção de DOM, depuração de JS e análise de rede/performance.
+    \item[Lighthouse:] Ferramenta de auditoria automatizada que avalia Performance, Acessibilidade, Boas Práticas, SEO e PWA.
+    \item[Web Vitals:] Iniciativa do Google para métricas de qualidade de experiência do usuário.
+    \begin{itemize}
+        \item \textbf{Core Web Vitals:} LCP (carregamento), CLS (estabilidade visual) e INP (interatividade).
+    \end{itemize}
+\end{description}
 
-\section{Ecossistema iOS (Nativo)}
-É o sistema operacional móvel proprietário da Apple, projetado para rodar exclusivamente em seus dispositivos (iPhone). É conhecido por seu ecossistema fechado e controlado, o que resulta em um alto padrão de consistência, segurança e performance.
+\section{Inteligência Artificial e Agentes}
 
-\subsection{Linguagens de Programação}
-O desenvolvimento legado era feito em Objective-C. A linguagem moderna e recomendada é o Swift, projetada pela Apple com foco em segurança, velocidade e sintaxe expressiva. Swift e Objective-C são interoperáveis.
-
-\subsection{Arquitetura e Componentes}
-O desenvolvimento iOS é baseado em um conjunto de frameworks poderosos:
-
-\subsection{Gerenciamento de Dependências}
-O gerenciador de pacotes oficial e integrado ao Xcode é o Swift Package Manager (SPM). Ferramentas de terceiros, como o CocoaPods, ainda são amplamente utilizadas em projetos legados.
-
-\subsection{Distribuição}
-A distribuição é feita exclusivamente pela Apple App Store, que possui um rigoroso processo de revisão para garantir a qualidade e a segurança dos aplicativos.
-
-\section{Ecossistema React Native (Multiplataforma)}
-É um framework para desenvolver aplicações móveis para Android e iOS usando uma única base de código em JavaScript e React \cite{reactnative}. React Native envolve não apenas a criação de interfaces em JavaScript, mas também a capacidade de escrever módulos nativos (Java/Kotlin ou Swift/Objective-C) quando necessário para otimizar performance ou acessar APIs específicas do sistema operacional.
-
-\subsection{Arquitetura legada do react-native: Bridge}
-Na arquitetura tradicional, a comunicação entre a thread JavaScript e a thread do Nativo (UI/Main) é feita através de uma Bridge serializável e assíncrona baseada em JSON.
-
-\begin{itemize}
-    \item \textbf{Serialização:} Para que uma chamada de função pudesse atravessar a Bridge, todos os argumentos e retornos são transformados (serializados) em JSON e, em seguida, em uma string.
-    \item \textbf{Assincronicidade:} A comunicação é inerentemente assíncrona, significa que o JavaScript envia uma mensagem e espera o retorno em um futuro tick do event loop. Isso evita o bloqueio do thread de UI.
-    \item \textbf{Overhead:} O processo constante de serialização, desserialização e a comunicação assíncrona cria um gargalo significativo (overhead), especialmente para chamadas frequentes ou grandes volumes de dados.
-\end{itemize}
-
-\subsection{Native Modules}
-São componentes que permitem a execução de código nativo (Java/Kotlin/Objective-C/Swift) em aplicações React Native. Eles atuam como pontes de comunicação entre o JavaScript e as APIs nativas do dispositivo, utilizando a arquitetura de Bridge para serialização assíncrona de mensagens. Essa abordagem fornece acesso a funcionalidades específicas de cada plataforma que não estão disponíveis no ambiente JavaScript puro, como sensores, armazenamento local e APIs proprietárias.
-
-\subsection{Ui manager}
-É o componente do React Native responsável por gerenciar a hierarquia de componentes nativos e coordenar as atualizações de interface. Ele atua como intermediário entre o JavaScript e as views nativas, convertendo componentes React em elementos de UI nativos (Android/iOS). Através da Bridge (ou JSI na nova arquitetura), o Ui Manager processa operações de criação, atualização e remoção de componentes, garantindo que as mudanças de estado sejam refletidas corretamente na interface do usuário de forma performática.
-
-\subsection{Nova Arquitetura do React Native: JSI, Turbo Modules e Fabric}
-A partir da versão 0.68, o React Native iniciou a transição de sua arquitetura para o JSI (JavaScript Interface), substituindo o conceito de Bridge. JSI (JavaScript Interface): É uma camada de C++ que permite que o JavaScript se comunique diretamente e de forma síncrona com o código nativo. Diferente da antiga Bridge, que realizava a comunicação de forma assíncrona, serializando mensagens via JSON, o JSI proporciona uma comunicação direta e eficiente, eliminando a sobrecarga de serialização/desserialização.
-
-\subsection{Turbo Modules}
-É o componente da Nova Arquitetura que substitui os Módulos Nativos legados. Eles são módulos carregáveis sob demanda e utilizam o JSI, permitindo que a chamada de funções JavaScript para o nativo seja síncrona e tipada, o que aumenta o desempenho e a segurança do código. O módulo precisa declarar sua interface em JavaScript/TypeScript e a implementação nativa (Kotlin/Java para Android e Swift/Objective-C para iOS) deve aderir a essa especificação.
-
-\subsection{Fabric}
-É o sistema de renderização do React Native que substitui a arquitetura de UI legada. Diferente da abordagem anterior, o Fabric permite comunicação síncrona direta entre JavaScript e threads nativas através do JSI, eliminando a serialização da Bridge. Essa arquitetura proporciona renderização mais rápida, melhor responsividade da interface e atualizações de UI mais eficientes, além de maior consistência entre Android e iOS.
-
-\begin{table}[h!]
-    \centering
-    \caption{Vantagens da Nova Arquitetura}
-    \begin{tabular}{|l|l|l|l|}
-        \hline
-        \textbf{Característica} & \textbf{Bridge Antiga} & \textbf{JSI/TurboModules (Nova Arquitetura)} & \textbf{Vantagem} \\ \hline
-        Comunicação & Serialização/Desserialização (JSON) & Chamadas Diretas (C++) & Elimina o overhead de JSON. \\ \hline
-        Sincronia & Assíncrona (Padrão) & Síncrona (Padrão) & Permite acesso instantâneo a valores. \\ \hline
-        Carregamento & Todos os módulos na inicialização & Carregamento sob demanda (Lazy Loading) & Inicialização mais rápida do aplicativo. \\ \hline
-        Tipagem & Implícita (dependente de JSON) & Tipagem Forte (via TypeScript Spec) & Reduz erros de runtime e melhora a manutenção. \\ \hline
-    \end{tabular}
-    \label{tab:vantagens_nova_arquitetura}
-    \vspace{0.3em}
-    \noindent{\small Fonte: Do próprio autor}
-\end{table}
-
-\subsection{Ecossistema Nativos em Atualizações de SDKs}
-A atualização de bibliotecas de terceiros (como o Google SDK) em um projeto React Native exige aderência estrita às regras de build dos ecossistemas móveis, gerenciadas por ferramentas nativas.
-
-\begin{itemize}
-    \item \textbf{Ecossistema Android (Kotlin/Gradle):} O sistema de build oficial é o Gradle. A atualização de um SDK (ex: Google Play Services) da versão 10 para 12 em Android implica na alteração das dependências no arquivo build.gradle (geralmente via implementation 'com.google.android.gms:...'). Falhas nesse processo podem resultar em erros de resolução de dependência ou na violação de regras do Android Gradle Plugin (AGP).
-    \item \textbf{Ecossistema iOS (Swift/CocoaPods/SPM):} O gerenciamento de dependências é historicamente feito via ferramentas como o CocoaPods, ou mais recentemente, pelo Swift Package Manager (SPM). A migração de SDKs (ex: Google SDK 10 para 12 no iOS) frequentemente exige a atualização do Podfile e pode envolver a adaptação do código nativo (em Swift ou Objective-C) para novas APIs, garantindo a interoperabilidade com o código nativo do TurboModule.
-\end{itemize}
-
-\subsection{React-native-builder-bob}
-É uma ferramenta de build e configuração para bibliotecas React Native que simplifica a criação e manutenção de pacotes com código nativo. Ele automatiza a configuração de projetos, gerando a estrutura necessária para módulos nativos multiplataforma (Android/iOS) e oferece suporte à Nova Arquitetura (JSI/TurboModules). A ferramenta facilita o desenvolvimento, testing e publicação de bibliotecas, fornecendo comandos padronizados para build, vinculação e distribuição de pacotes.
-
-\subsection{Upgrade Helper}
-É uma ferramenta oficial do React Native que auxilia no processo de atualização entre versões. Através de uma interface web comparativa, ela mostra as mudanças necessárias em arquivos de configuração, dependências e código entre a versão atual e a desejada. A ferramenta fornece um guia detalhado com instruções específicas para cada breaking change e adaptação requerida, agilizando significativamente o processo de migração e reduzindo erros durante a atualização do projeto.
-
-\section{O Padrão API Gateway}
-O API Gateway é um padrão de arquitetura que atua como um único ponto de entrada para todas as requisições de clientes (como um browser ou aplicativo móvel). Ele encapsula a estrutura interna do sistema de microsserviços, protegendo a topologia da rede interna e oferecendo serviços de fronteira.
-
-\subsection{Benefícios Arquiteturais do API Gateway}
-\begin{itemize}
-    \item \textbf{Desacoplamento (Decoupling):} O front-end se comunica apenas com o Gateway, tornando-o independente da evolução, reorganização ou número de microsserviços internos. Se o serviço Produtos for dividido em Catálogo e Estoque, o front-end não precisa ser alterado, pois o Gateway absorve essa orquestração.
-    \item \textbf{Orquestração/Agregação de Dados:} Permite que uma única requisição de cliente resulte em múltiplas chamadas aos serviços internos, agregando os dados para o formato otimizado que o cliente necessita (padrão Backend for Frontend - BFF em sua forma mais simples).
-    \item \textbf{Cross-Cutting Concerns:} Centraliza funcionalidades não relacionadas diretamente à regra de negócio, como autenticação de usuário (JWT), limitação de taxa (rate limiting), logging e cache.
-    \item \textbf{Princípios SOLID:} Adere ao Princípio de Responsabilidade Única (SRP) ao isolar a responsabilidade de roteamento, segurança e agregação de dados em um serviço dedicado, mantendo os microsserviços internos focados apenas em suas regras de negócio.
-\end{itemize}
-
-
-
-
-
-
-
-\section{Agentes Conversacionais (Conversational Agents)}
-A plataforma anteriormente conhecida como Dialogflow CX evoluiu para o ecossistema de \textit{Conversational Agents} da Google Cloud, integrando capacidades determinísticas e generativas.
-
-\subsection{Paradigmas de Desenvolvimento}
-A documentação oficial da Google classifica os agentes em três categorias principais baseadas no nível de controle e uso de IA Generativa:
-
-\begin{itemize}
-    \item \textbf{Fluxos Determinísticos (Deterministic Flows):} Baseados em Máquinas de Estados Finitas (FSM). Oferecem controle total sobre a conversa através de \textit{Pages} (Estados), \textit{Routes} (Transições) e \textit{Intents}. São ideais para processos estruturados que exigem precisão e consistência.
-    \item \textbf{Totalmente Generativos (Fully Generative):} Utilizam \textit{Playbooks}, que são instruções em linguagem natural passadas a um Grande Modelo de Linguagem (LLM). O modelo decide dinamicamente o fluxo da conversa e gera as respostas, dispensando a criação manual de grafos de estados complexos.
-    \item \textbf{Fluxos Parcialmente Generativos (Partly Generative Flows):} Combinam a estrutura rígida dos fluxos com recursos generativos pontuais, como \textit{Generators} (para gerar respostas flexíveis em momentos específicos) e \textit{Generative Fallback} (para lidar com inputs não previstos).
-\end{itemize}
-
-\subsection{Componentes da Arquitetura}
-\begin{itemize}
-    \item \textbf{Pages e Flows:} Blocos de construção para controle explícito da conversa.
-    \item \textbf{Playbooks:} Módulos generativos orientados a objetivos (ex: "Ajudar o usuário a resetar a senha").
-    \item \textbf{Data Stores:} Abstração que conecta o agente a fontes de dados (sites, documentos, BigQuery) para funcionalidades de RAG (Retrieval-Augmented Generation).
-\end{itemize}
-
-\section{Computação Serverless e Integração}
-A computação serverless permite que desenvolvedores construam e executem aplicações sem gerenciar servidores.
-
-\subsection{Cloud Functions}
-São funções de propósito único, orientadas a eventos, que escalam automaticamente. No contexto de chatbots, atuam como \textit{fulfillment}, conectando a intenção do usuário a sistemas de backend (bancos de dados, APIs de terceiros).
-
-\section{Retrieval-Augmented Generation (RAG) e Data Stores}
-RAG é uma técnica que otimiza a saída de um LLM referenciando uma base de conhecimento confiável. No ecossistema Google Cloud, isso é implementado através de \textit{Data Stores} no Vertex AI Agent Builder.
-\begin{itemize}
-    \item \textbf{Ingestão:} Documentos e URLs são indexados em um \textit{Data Store}.
-    \item \textbf{Recuperação (Retrieval):} O agente busca trechos relevantes baseados na query do usuário.
-    \item \textbf{Geração:} O LLM utiliza o conteúdo recuperado para formular uma resposta fundamentada.
-\end{itemize}
-
-\section{Agentes Autônomos e Padronização}
-A nova fronteira da IA envolve agentes que não apenas respondem, mas agem no mundo digital.
-
-\subsection{Model Context Protocol (MCP)}
-O MCP é um padrão aberto que permite aos desenvolvedores construir conectores seguros e bidirecionais entre suas fontes de dados e ferramentas baseadas em IA. Ele resolve o problema "Muitos Modelos, Muitas Ferramentas" padronizando a interface de descoberta e execução de ferramentas.
-
-\subsection{Agent Development Kits (ADK)}
-Frameworks que fornecem abstrações para construção de agentes, gerenciando memória, planejamento (chain-of-thought) e uso de ferramentas, permitindo a criação de assistentes que perseguem objetivos complexos de forma autônoma.
+\begin{description}
+    \item[Agentes Conversacionais:] Evolução do Dialogflow CX, integrando fluxos determinísticos (baseados em estados) e generativos (baseados em LLMs e Playbooks).
+    \item[RAG (Retrieval-Augmented Generation):] Técnica que otimiza respostas de LLMs usando bases de conhecimento confiáveis (Data Stores).
+    \item[Model Context Protocol (MCP):] Padrão aberto para conectores seguros entre dados e ferramentas de IA.
+    \item[Agent Development Kits (ADK):] Frameworks para construção de agentes autônomos.
+\end{description}
 
 \input{TEXTO/atividades-parte-a}
-
-
 
 \input{TEXTO/atividades-parte-b}
 
 \input{TEXTO/atividades-parte-c}
 
 
+%
+% O arquivo de formatação abntex2-alf.bst coloca todas as entradas no formato correto.
+%
 
-\includepdf[pages=-]{ultimar-pags.pdf}
+\bibliographystyle{abntex2-alf}
+\bibliography{TEXTO/TEXTO-Bibliografia}
+
+
+
+\includepdf[pages=-]{ultimas-paginas.pdf}
 
 
 \end{document}
-
-
-
