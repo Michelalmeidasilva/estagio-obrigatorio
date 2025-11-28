@@ -160,7 +160,7 @@ Para garantir a qualidade e a manutenibilidade do software, foram adotados os se
     \item[Engenharia de Software:] É a aplicação de uma abordagem sistemática, disciplinada e quantificável para o desenvolvimento, operação e manutenção de software \cite{pressman}.
     \item[Metodologia Ágil:] É uma abordagem iterativa para o gerenciamento de projetos e desenvolvimento de software que ajuda as equipes a entregar valor aos seus clientes de forma mais rápida e com agilidade de entrega das funcionalidades.
     \item[Scrum:] É um dos frameworks mais populares para a implementação de desenvolvimento ágil. Ele é projetado para que equipes possam entregar valor ao cliente de forma incremental e iterativa \cite{scrum}.
-    \item[Código Limpo (Clean Code):] É uma filosofia de desenvolvimento de software popularizada por Robert C. Martin ("Uncle Bob"). A premissa é que o código deve ser escrito de forma simples, direta e legível, como uma prosa bem escrita. Suas características incluem o uso de nomes significativos para variáveis e funções, funções pequenas com responsabilidades únicas e a minimização de complexidade.
+    \item[Código Limpo (Clean Code):] É uma filosofia de desenvolvimento de software popularizada por Robert C. Martin (``Uncle Bob''). A premissa é que o código deve ser escrito de forma simples, direta e legível, como uma prosa bem escrita. Suas características incluem o uso de nomes significativos para variáveis e funções, funções pequenas com responsabilidades únicas e a minimização de complexidade.
     \item[Arquitetura Limpa (Clean Architecture):] Também concebida por Robert C. Martin, é um modelo de design de software que impõe uma rigorosa separação de responsabilidades. A arquitetura é representada por círculos concêntricos, onde a regra principal é a Regra da Dependência: as dependências do código-fonte só podem apontar para dentro. Nada em um círculo interno pode saber qualquer coisa sobre um círculo externo.
     \item[Princípios SOLID:] É um acrônimo para cinco princípios de design de software que visam tornar o código mais compreensível, flexível e manutenível \cite{cleanarch}:
     \begin{itemize}
@@ -170,7 +170,7 @@ Para garantir a qualidade e a manutenibilidade do software, foram adotados os se
         \item \textbf{I} - Interface Segregation Principle
         \item \textbf{D} - Dependency Inversion Principle
     \end{itemize}
-    \item[Design Patterns (Padrões de Projeto):] São soluções gerais e reutilizáveis para problemas frequentes no desenvolvimento de software. Popularizados pelo "Gang of Four" (GoF), são categorizados em:
+    \item[Design Patterns (Padrões de Projeto):] São soluções gerais e reutilizáveis para problemas frequentes no desenvolvimento de software. Popularizados pelo ``Gang of Four'' (GoF), são categorizados em:
     \begin{itemize}
         \item \textbf{Criação:} Abstraem o processo de instanciação de objetos (ex: Factory, Singleton).
         \item \textbf{Estruturais:} Combinam classes e objetos para formar estruturas maiores (ex: Adapter, Decorator).
@@ -219,13 +219,12 @@ A arquitetura do sistema evoluiu de modelos tradicionais para abordagens mais mo
         \centering
         \caption{Comunicação JSI entre React-native e Nativo.}
         \label{fig:com_async}
-        \includegraphics[scale=0.5]
-        {IMAGENS/comunicao-async-rn.png} % Placeholder para a imagem
+        \includegraphics[scale=0.25]
+        {IMAGENS/comunicao-async-rn-2.png} % Placeholder para a imagem
         \vspace{0.3em}
         \newline
         {\small Fonte: Do próprio autor.}
     \end{figure}
-    \newpage
     
     \end{itemize}
     \item \textbf{React-native-builder-bob} para criação de bibliotecas e \textit{Upgrade Helper} para migração de versões.
@@ -269,8 +268,12 @@ A arquitetura do sistema evoluiu de modelos tradicionais para abordagens mais mo
 \bibliography{TEXTO/TEXTO-Bibliografia}
 
 
-
 \includepdf[pages=-]{ultimas-paginas.pdf}
+
+
+\appendix
+\input{TEXTO/apendice-migracao}
+\input{TEXTO/apendice-api}
 
 
 \end{document}

@@ -1,0 +1,125 @@
+\chapter{Códigos de Integração e APIs}
+\label{apendice:api}
+
+Este apêndice contém os códigos fonte relacionados à implementação do API Gateway, Webhooks para agentes conversacionais e servidores MCP.
+
+\section{API Gateway}
+
+\textbf{Especificação OpenAPI (Swagger)}:
+
+\begin{lstlisting}[language=yaml, caption={Trecho da Especificação OpenAPI (Gateway Público)}, label={lst:openapi-spec}]
+# Trecho da Especificação OpenAPI (Gateway Público)
+paths:
+  /v1/produtos/{id}:
+    get:
+      summary: Retorna detalhes de um produto com suas avaliações
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  produtoId: { type: integer }
+                  nome: { type: string }
+                  preco: { type: number }
+                  # Propriedade agregada:
+                  mediaAvaliacoes: { type: number, description: "Média calculada pelo Gateway" }
+                  totalAvaliacoes: { type: integer }
+\end{lstlisting}
+
+
+\newpage
+\textbf{Implementação do Gateway (Node.js/Express)}:
+
+\begin{lstlisting}[language=JavaScript, caption={Exemplo de código no API Gateway}, label={lst:api-gateway}]
+const express = require('express');
+const axios = require('axios');
+const router = express.Router();
+
+const URL_PRODUTOS = 'http://servico-produtos:3001/api';
+const URL_AVALIACOES = 'http://servico-avaliacoes:3002/api';
+
+router.get('/v1/produtos/:id', async (req, res) => {
+    const produtoId = req.params.id;
+    const [produtoResponse, avaliacoesResponse] = await Promise.all([
+        axios.get(`${URL_PRODUTOS}/produtos/${produtoId}`),
+        axios.get(`${URL_AVALIACOES}/avaliacoes/produto/${produtoId}`)
+    ]);
+
+    const produto = produtoResponse.data;
+    const avaliacoes = avaliacoesResponse.data;
+    const media = avaliacoes.length 
+                  ? avaliacoes.reduce((soma, a) => soma + a.nota, 0) / avaliacoes.length 
+                  : 0;
+
+    const respostaGateway = { produtoId: produto.id, nome: produto.nome, preco: produto.valor, mediaAvaliacoes: parseFloat(media.toFixed(1)), totalAvaliacoes: avaliacoes.length
+    };
+
+    return res.status(200).json(respostaGateway);
+});
+module.exports = router;
+\end{lstlisting}
+
+
+\newpage
+\section{Webhooks e Agentes}
+
+\textbf{Webhook para Rastreamento de Encomendas (Node.js)}:
+
+\begin{lstlisting}[language=JavaScript, caption={Webhook para Rastreamento de Encomendas (Node.js)}, label={lst:webhook}]
+const axios = require('axios');
+exports.dialogflowWebhook = async (req, res) => {
+    const trackingCode = req.body.sessionInfo.parameters.codigo_rastreio;
+    
+    if (!trackingCode || trackingCode.length < 8) {
+      return res.json({
+        fulfillmentResponse: { messages: [{ text: {  text: ['Codigo de rastreio invalido'] }}] }});}
+          
+    const apiUrl = `https://api.transportadora.com/v1/tracking/${trackingCode}`;
+    const response = await axios.get(apiUrl, {
+      headers: { 'Authorization': `Bearer ${process.env.API_TOKEN}` },
+      timeout: 5000 // Timeout de 5 segundos});
+
+    const status = response.data; // Exemplo de retorno: { local: "Curitiba", previsao: "2 dias", status: "em_transito" }
+
+    const mensagem = `Sua encomenda ${trackingCode} esta em ${status.local}. ` +
+                     `Previsao de entrega: ${status.previsao}. ` +
+                     `Status: ${status.status}.`;
+
+    return res.json({
+      fulfillmentResponse: { messages: [{ text: { text: [mensagem] }}]},
+      sessionInfo: {parameters: {ultimo_status: status.status, data_consulta: new Date().toISOString()}}});
+};
+\end{lstlisting}
+
+
+\newpage
+\section{Model Context Protocol (MCP)}
+
+\textbf{Implementação de Servidor MCP (TypeScript)}:
+
+\begin{lstlisting}[language=JavaScript, caption={Implementação de Servidor MCP (TypeScript)}, label={lst:mcp-server}]
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+
+const server = new Server( { name: "estoque-server", version: "1.0.0" }, { capabilities: { tools: {} } });
+
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  return {
+    tools: [{ name: "consultar_estoque", description: "Consulta a quantidade disponivel de um produto pelo ID", inputSchema: { type: "object", properties: { produtoId: { type: "string" } }, required: ["produtoId"]}}]};});
+
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  if (request.params.name === "consultar_estoque") {
+    const { produtoId } = request.params.arguments;
+    const estoque = db.find(p => p.id === produtoId)?.qtd || 0;
+    
+    return { content: [{ type: "text", text: `O produto ${produtoId} possui ${estoque} unidades.`}]};
+  }
+  throw new Error("Ferramenta nao encontrada");
+});
+
+const transport = new StdioServerTransport();
+await server.connect(transport);
+\end{lstlisting}

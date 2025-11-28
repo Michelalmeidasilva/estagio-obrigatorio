@@ -1,0 +1,205 @@
+\chapter{Códigos da Migração de Arquitetura React Native}
+\label{apendice:migracao}
+
+Este apêndice contém os códigos fonte utilizados no processo de migração da arquitetura Bridge para a Nova Arquitetura (JSI) do React Native.
+
+\section{Implementação A - Arquitetura Legada}
+
+A implementação abaixo utiliza a arquitetura legada, empregando o módulo NativeModules.
+
+\begin{lstlisting}[language=JavaScript, caption={App.js (Lado JS)}, label={lst:legacy-js}]
+import React from 'react';
+import { Button, View, NativeModules } from 'react-native';
+const { HelloWorldModule } = NativeModules;
+
+const App = () => {
+  const handlePressLegacy = async () => {
+      const saudacao = await HelloWorldModule.getHelloWorld();
+      console.log(saudacao); // Imprime "Olá mundo (Legado via Bridge)"
+  };
+
+  return (
+    <View style={{ flex: 1, justifyContent: "center" }}>
+      <Button title="Testar Bridge Legada" onPress={handlePressLegacy}/>
+    </View>
+  );
+};
+
+export default App;
+\end{lstlisting}
+
+\newpage
+No Código Nativo (Android - Java):
+
+\begin{lstlisting}[language=Java, caption={HelloWorldModule.java}, label={lst:legacy-java}]
+package com.meuapp; // HelloWorldModule.java
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.Promise;
+
+public class HelloWorldModule extends ReactContextBaseJavaModule {
+    public HelloWorldModule(ReactApplicationContext context) {
+        super(context);
+    }
+
+    @Override
+    public String getName() {
+        return "HelloWorldModule"; // Nome usado no JS
+    }
+
+    @ReactMethod // Metodo exposto para o JS
+    public void getHelloWorld(Promise promise) {
+        promise.resolve("Ola mundo (Legado via Bridge)"); 
+    }
+}
+\end{lstlisting}
+
+
+\newpage
+No código nativo (iOS - Objective-C):
+
+\begin{lstlisting}[language=C++, caption={HelloWorldModule (Objective-C)}, label={lst:legacy-objc}]
+#import <React/RCTBridgeModule.h> // HelloWorldModule.h
+// O modulo deve implementar o protocolo <RCTBridgeModule>
+@interface HelloWorldModule : NSObject <RCTBridgeModule>
+@end
+
+#import "HelloWorldModule.h"
+@implementation HelloWorldModule
+// Expoe o modulo para o JS com o nome "HelloWorldModule"
+RCT_EXPORT_MODULE(HelloWorldModule);
+// Expoe o metodo getHelloWorld para o JS
+RCT_EXPORT_METHOD(getHelloWorld: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject)  {
+    NSString *saudacao = @"Ola mundo (Legado via Bridge)";
+    if (saudacao) {
+        resolve(saudacao);
+    } else {
+        reject(@"error", @"Nao foi possível gerar a saudação", nil);
+    }
+}
+@end
+\end{lstlisting}
+
+
+\newpage
+\section{Implementação B - Nova Arquitetura}
+
+\textbf{Definição da Interface de API (Spec - TypeScript)}:
+
+\begin{lstlisting}[language=TypeScript, caption={NativeHelloWorld.ts (Spec)}, label={lst:new-arch-spec}]
+// /js/NativeHelloWorld.ts (A "Spec")
+import type { TurboModule } from 'react-native/Libraries/TurboModule/TurboModule';
+import { TurboModuleRegistry } from 'react-native';
+// 1. Definimos a interface
+export interface Spec extends TurboModule {
+// 2. Definimos um método SÍNCRONO
+  getHelloWorld(): string; 
+}
+// 3. Registramos o módulo (o nome 'RTNHelloWorld' é o nome oficial do componente)
+export default TurboModuleRegistry.getEnforcing<Spec>(
+  'RTNHelloWorld',
+);
+\end{lstlisting}
+
+
+\newpage
+\textbf{Implementação Nativa (Android - Kotlin)}:
+
+\begin{lstlisting}[language=Java, caption={RTNHelloWorldModule.java}, label={lst:new-arch-java}]
+package com.meuapp; //RTNHelloWorldModule.java
+
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import androidx.annotation.NonNull;
+
+// 1. O Codegen gera 'NativeHelloWorldSpec'
+import com.facebook.fbreact.specs.NativeHelloWorldSpec; 
+
+public class RTNHelloWorldModule extends NativeHelloWorldSpec {
+  public static final String NAME = "RTNHelloWorld";
+  public RTNHelloWorldModule(ReactApplicationContext context) {
+        super(context);
+    }
+
+  @Override
+  @NonNull
+  public String getName() {
+    return NAME;
+  }
+
+  @Override
+  public String getHelloWorld() {
+    return "Ola mundo (Nova Arquitetura via JSI)";
+ }
+}
+\end{lstlisting}
+
+
+\newpage
+\textbf{Código em JS}:
+
+\begin{lstlisting}[language=JavaScript, caption={App.js (Lado JS com Nova Arquitetura)}, label={lst:new-arch-js}]
+// App.js (Lado JS)
+import React from 'react';
+import { Button, View } from 'react-native';
+
+// 1. Importa diretamente o módulo (conforme a Spec)
+import RTNHelloWorld from './js/NativeHelloWorld'; 
+
+const App = () => {
+
+  const handlePressNewArch = () => {
+    const saudacao = RTNHelloWorld.getHelloWorld();
+    // Imprime "Ola mundo (Nova Arquitetura via JSI)"
+    console.log(saudacao); 
+  };
+
+  return (
+    <View style={{ flex: 1, justifyContent: 'center' }}>
+      <Button title="Testar Nova Arquitetura" onPress={handlePressNewArch} />
+    </View>
+  );
+};
+
+export default App;
+\end{lstlisting}
+
+
+\newpage
+\textbf{Implementação Nativa (iOS - Objective-C)}:
+
+\begin{lstlisting}[language=C++, caption={RTNHelloWorld (Objective-C)}, label={lst:new-arch-objc}]
+// RTNHelloWorld.h
+// 1. Importa a Spec gerada pelo Codegen (baseada no seu .ts)
+#import <RTNHelloWorld/RTNHelloWorldSpec.h> 
+
+// 2. O nome da classe deve corresponder ao que o JS espera (RTNHelloWorld)
+// 3. A classe implementa o protocolo da Spec gerada
+@interface RTNHelloWorld : NSObject <NativeHelloWorldSpec> 
+@end
+
+// RTNHelloWorld.mm
+#import "RTNHelloWorld.h"
+
+@implementation RTNHelloWorld
+
+// 1. Exporta o módulo (o nome é o da classe)
+RCT_EXPORT_MODULE(RTNHelloWorld)
+
+// 2. Esta é a implementação SÍNCRONA da Spec
+- (NSString *)getHelloWorld
+{
+    // O retorno é direto, sem Promises, sem Bridge
+    return @"Olá mundo (Nova Arquitetura via JSI)";
+}
+
+/*
+   NOTA: O Codegen e o template de TurboModule cuidam de
+   todo o "encanamento" C++ (JSI) para que este método
+   possa ser chamado diretamente pelo JS.
+*/
+
+@end
+\end{lstlisting}

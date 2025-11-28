@@ -24,45 +24,45 @@ Aprofundei o conhecimento sobre como sistemas de NLP interpretam linguagem human
 \textbf{Intents (Intenções):} Estudei como treinar o modelo para reconhecer diferentes formas de expressar a mesma intenção. Por exemplo, as frases abaixo representam a mesma intenção de agendamento:
 
 \begin{lstlisting}[language=text, caption={Variações Linguísticas para Treinamento de Intent}]
-"Quero marcar um cardiologista"
-"Preciso de uma consulta para amanha"
-"Tem vaga para doutor Paulo?"
-"Gostaria de agendar um horario"
-"Quero consulta com dermatologista"
+``Quero marcar um cardiologista''
+``Preciso de uma consulta para amanha''
+``Tem vaga para doutor Paulo?''
+``Gostaria de agendar um horario''
+``Quero consulta com dermatologista''
 \end{lstlisting}
 
 \textbf{Entidades (Entities):} Compreendi como o sistema extrai informações específicas de frases em linguagem natural. Exemplo de análise:
 
-Entrada do usuário: \textit{"Quero ir na unidade Centro na sexta-feira"}
+Entrada do usuário: \textit{``Quero ir na unidade Centro na sexta-feira''}
 
 Extração automática:
 \begin{itemize}
-    \item \texttt{@unidade}: "Centro" (entidade customizada)
-    \item \texttt{@sys.date}: "2024-11-29" (entidade de sistema que converte expressões temporais)
+    \item \texttt{@unidade}: ``Centro'' (entidade customizada)
+    \item \texttt{@sys.date}: ``2024-11-29'' (entidade de sistema que converte expressões temporais)
 \end{itemize}
 
 \subsubsection{Aplicação Prática: Modelagem de Fluxo de Agendamento}
 Com base nos estudos teóricos, modelei um fluxo conversacional completo aplicando o conceito de Slot Filling (preenchimento obrigatório de campos):
 
 \begin{enumerate}
-    \item \textbf{Estado "Início":} Captura a especialidade médica desejada.
-    \item \textbf{Estado "Coleta de Unidade":} Permanece em loop até que o parâmetro \texttt{\$session.params.unidade} seja preenchido.
-    \item \textbf{Estado "Coleta de Data":} Valida se a data informada é futura e está dentro do período permitido (30 dias).
-    \item \textbf{Estado "Coleta de Horário":} Apresenta opções de horários disponíveis.
-    \item \textbf{Estado "Confirmação":} Exibe resumo completo para validação do usuário.
-    \item \textbf{Estado "Finalização":} Processa o agendamento e gera protocolo.
+    \item \textbf{Estado ``Início'':} Captura a especialidade médica desejada.
+    \item \textbf{Estado ``Coleta de Unidade'':} Permanece em loop até que o parâmetro \texttt{\$session.params.unidade} seja preenchido.
+    \item \textbf{Estado ``Coleta de Data'':} Valida se a data informada é futura e está dentro do período permitido (30 dias).
+    \item \textbf{Estado ``Coleta de Horário'':} Apresenta opções de horários disponíveis.
+    \item \textbf{Estado ``Confirmação'':} Exibe resumo completo para validação do usuário.
+    \item \textbf{Estado ``Finalização'':} Processa o agendamento e gera protocolo.
 \end{enumerate}
 
 \subsubsection{Estudo de Lógica Condicional em Fluxos Conversacionais}
 Pesquisei como implementar rotas condicionais para controlar transições entre estados:
 
 \begin{lstlisting}[language=text, caption={Exemplo de Lógica Condicional Estudada}]
-SE $session.params.confirmacao = "sim" ENTAO
-    Transitar para Estado "Finalizacao"
+SE $session.params.confirmacao = ``sim'' ENTAO
+    Transitar para Estado ``Finalizacao''
 
-SE $session.params.confirmacao = "nao" ENTAO
+SE $session.params.confirmacao = ``nao'' ENTAO
     Limpar todos os parametros
-    Retornar para Estado "Inicio"
+    Retornar para Estado ``Inicio''
 \end{lstlisting}
 
 \subsubsection{Análise de Estratégias de Tratamento de Erros}
@@ -161,34 +161,8 @@ Estudei o padrão arquitetural API Gateway e como Cloud Functions podem atuar co
 \end{itemize}
 
 \subsubsection{Implementação do Webhook de Rastreamento}
-Para o caso de uso de rastreamento de encomendas em um sistema de logística, implementei a seguinte Cloud Function:
+Para o caso de uso de rastreamento de encomendas em um sistema de logística, implementei a Cloud Function conforme detalhado na Listagem \ref{lst:webhook} do Apêndice \ref{apendice:api}.
 
-\newpage
-\begin{lstlisting}[language=JavaScript, caption={Webhook para Rastreamento de Encomendas (Node.js)}]
-const axios = require('axios');
-exports.dialogflowWebhook = async (req, res) => {
-    const trackingCode = req.body.sessionInfo.parameters.codigo_rastreio;
-    
-    if (!trackingCode || trackingCode.length < 8) {
-      return res.json({
-        fulfillmentResponse: { messages: [{ text: {  text: ['Codigo de rastreio invalido'] }}] }});}
-          
-    const apiUrl = `https://api.transportadora.com/v1/tracking/${trackingCode}`;
-    const response = await axios.get(apiUrl, {
-      headers: { 'Authorization': `Bearer ${process.env.API_TOKEN}` },
-      timeout: 5000 // Timeout de 5 segundos});
-
-    const status = response.data; // Exemplo de retorno: { local: "Curitiba", previsao: "2 dias", status: "em_transito" }
-
-    const mensagem = `Sua encomenda ${trackingCode} esta em ${status.local}. ` +
-                     `Previsao de entrega: ${status.previsao}. ` +
-                     `Status: ${status.status}.`;
-
-    return res.json({
-      fulfillmentResponse: { messages: [{ text: { text: [mensagem] }}]},
-      sessionInfo: {parameters: {ultimo_status: status.status, data_consulta: new Date().toISOString()}}});
-};
-\end{lstlisting}
 
 \subsubsection{Boas Práticas Implementadas}
 
@@ -260,7 +234,7 @@ O estudo explorou o desafio de criar assistentes capazes de responder perguntas 
 Estudei o padrão arquitetural RAG e suas etapas fundamentais:
 
 \begin{enumerate}
-    \item \textbf{Ingestão de Documentos:} Upload do PDF "Normas da Empresa 2024" para o Vertex AI Search.
+    \item \textbf{Ingestão de Documentos:} Upload do PDF ``Normas da Empresa 2024'' para o Vertex AI Search.
     \item \textbf{Chunking e Indexação:} O documento é dividido em chunks semânticos e indexado com embeddings vetoriais.
     \item \textbf{Retrieval (Busca):} Quando o usuário faz uma pergunta, o sistema busca os chunks mais relevantes usando similaridade vetorial.
     \item \textbf{Augmentation (Aumento):} Os chunks recuperados são injetados no contexto do prompt do modelo generativo.
@@ -284,47 +258,22 @@ O estudo buscou superar as limitações de integrações ad-hoc (como webhooks r
 Estudei a especificação do protocolo MCP, que define uma arquitetura cliente-servidor para conectar IAs a sistemas:
 
 \begin{itemize}
-    \item \textbf{MCP Hosts:} Aplicações que "consomem" o contexto (ex: IDEs, Chatbots).
+    \item \textbf{MCP Hosts:} Aplicações que ``consomem'' o contexto (ex: IDEs, Chatbots).
     \item \textbf{MCP Servers:} Serviços que expõem recursos, prompts e ferramentas.
     \item \textbf{MCP Clients:} O conector que mantém a sessão entre Host e Server.
 \end{itemize}
 
-A principal vantagem identificada foi a dissociação: um único servidor MCP (ex: "Conector Google Drive") pode ser reutilizado por múltiplos agentes sem reescrita de código.
+A principal vantagem identificada foi a dissociação: um único servidor MCP (ex: ``Conector Google Drive'') pode ser reutilizado por múltiplos agentes sem reescrita de código.
 
-\subsubsection{Implementação de um Servidor MCP Simples}
-Para fixar o aprendizado, desenvolvi um servidor MCP em TypeScript que expõe uma base de dados local de produtos para um agente.
-\newpage
-\begin{lstlisting}[language=JavaScript, caption={Implementação de Servidor MCP (TypeScript)}]
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+Para fixar o aprendizado, desenvolvi um servidor MCP em TypeScript que expõe uma base de dados local de produtos para um agente (ver Listagem \ref{lst:mcp-server} no Apêndice \ref{apendice:api}).
 
-const server = new Server( { name: "estoque-server", version: "1.0.0" }, { capabilities: { tools: {} } });
-
-server.setRequestHandler(ListToolsRequestSchema, async () => {
-  return {
-    tools: [{ name: "consultar_estoque", description: "Consulta a quantidade disponivel de um produto pelo ID", inputSchema: { type: "object", properties: { produtoId: { type: "string" } }, required: ["produtoId"]}}]};});
-
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  if (request.params.name === "consultar_estoque") {
-    const { produtoId } = request.params.arguments;
-    const estoque = db.find(p => p.id === produtoId)?.qtd || 0;
-    
-    return { content: [{ type: "text", text: `O produto ${produtoId} possui ${estoque} unidades.`}]};
-  }
-  throw new Error("Ferramenta nao encontrada");
-});
-
-const transport = new StdioServerTransport();
-await server.connect(transport);
-\end{lstlisting}
 
 \subsubsection{Estudo de Agent Development Kit (ADK)}
 Explorei frameworks e kits de desenvolvimento (ADK) que facilitam a orquestração de agentes. O foco foi entender como esses kits abstraem a complexidade de:
 
 \begin{itemize}
-    \item \textbf{Gerenciamento de Memória:} Como o agente "lembra" de interações passadas.
-    \item \textbf{Planejamento (Planning):} Capacidade do agente de quebrar uma tarefa complexa ("Planejar viagem") em sub-tarefas ("Ver voos", "Reservar hotel").
+    \item \textbf{Gerenciamento de Memória:} Como o agente ``lembra'' de interações passadas.
+    \item \textbf{Planejamento (Planning):} Capacidade do agente de quebrar uma tarefa complexa (``Planejar viagem'') em sub-tarefas (``Ver voos'', ``Reservar hotel'').
     \item \textbf{Execução de Ferramentas:} O uso autônomo de ferramentas expostas via MCP ou APIs.
 \end{itemize}
 

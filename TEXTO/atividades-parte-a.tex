@@ -25,7 +25,7 @@ A criação de um player de vídeo envolve a construção de uma Máquina de Est
 Seguindo o princípio de Separação de Responsabilidades e a filosofia da Arquitetura Limpa, a lógica de negócio foi completamente isolada da camada de apresentação.
 
 \begin{itemize}
-    \item \textbf{Custom Hook (useVideoPlayerState):} Foi criado um custom hook que serve como o "cérebro" do componente. Ele encapsula toda a interação com a API da biblioteca de vídeo (ex: React Player) e gerencia a FSM interna do player.
+    \item \textbf{Custom Hook (useVideoPlayerState):} Foi criado um custom hook que serve como o ``cérebro'' do componente. Ele encapsula toda a interação com a API da biblioteca de vídeo (ex: React Player) e gerencia a FSM interna do player.
     \item \textbf{Estados da FSM:} O hook gerencia os seguintes estados: IDLE, LOADING, PLAYING, PAUSED, SEEKING, ENDED, ERROR.
     \item \textbf{API Exposta pelo Hook:} O hook retorna um objeto bem definido para o componente de interface de usuário (UI), contendo:
     \begin{itemize}
@@ -37,7 +37,7 @@ Seguindo o princípio de Separação de Responsabilidades e a filosofia da Arqui
 \subsubsection{Construção e Otimização de Performance}
 A performance foi tratada como um requisito fundamental, especialmente em interações de alta frequência.
 
-\textbf{Evento onProgress:} Este evento pode disparar múltiplas vezes por segundo, o que, se gerenciado ingenuamente com useState, causaria um excesso de re-renderização no React, sobrecarregando e resultando em uma UI ``travada".
+\textbf{Evento onProgress:} Este evento pode disparar múltiplas vezes por segundo, o que, se gerenciado ingenuamente com useState, causaria um excesso de re-renderização no React, sobrecarregando e resultando em uma UI ``travada''.
 
 \begin{itemize}
     \item \textbf{Manipulação Direta da DOM para UI:} A atualização visual da barra de progresso, que precisa ser fluida, foi desacoplada do estado do React. Foi utilizado o hook useRef para obter uma referência direta ao elemento da barra e atualizar seu estilo diretamente, contornando o ciclo de renderização do React para essa animação específica.
@@ -89,8 +89,8 @@ Foi modificado  um sistema legado e monolítico, sem testes e com alto impacto n
 
 \subsection{Execução Baseada em Engenharia de Software}
 \begin{itemize}
-    \item \textbf{Engenharia Reversa e Testes de Caracterização:} Antes de alterar o código, foi aplicada a técnica de Testes de Caracterização. Foi criada uma suíte de testes que não validava o que o código deveria fazer, mas o que ele realmente fazia, incluindo seus comportamentos inesperados. Isso criou uma rede de segurança que "caracterizou" o comportamento do sistema.
-    \item \textbf{Refatoração Baseada em Padrões:} Com a segurança dos testes, foi liderada a refatoração. O código original era uma violação do Princípio Aberto/Fechado (para adicionar um novo desconto, era preciso modificar a função existente). Foi implementado o Strategy Pattern, onde cada lógica de desconto se tornou uma classe separada com uma interface comum. A função principal agora apenas seleciona a "estratégia" correta, sem precisar conhecer seus detalhes.
+    \item \textbf{Engenharia Reversa e Testes de Caracterização:} Antes de alterar o código, foi aplicada a técnica de Testes de Caracterização. Foi criada uma suíte de testes que não validava o que o código deveria fazer, mas o que ele realmente fazia, incluindo seus comportamentos inesperados. Isso criou uma rede de segurança que ``caracterizou'' o comportamento do sistema.
+    \item \textbf{Refatoração Baseada em Padrões:} Com a segurança dos testes, foi liderada a refatoração. O código original era uma violação do Princípio Aberto/Fechado (para adicionar um novo desconto, era preciso modificar a função existente). Foi implementado o Strategy Pattern, onde cada lógica de desconto se tornou uma classe separada com uma interface comum. A função principal agora apenas seleciona a ``estratégia'' correta, sem precisar conhecer seus detalhes.
     \item \textbf{Manutenibilidade:} A nova arquitetura tornou-se aberta para extensão (bastava criar uma nova classe de estratégia) e fechada para modificação, garantindo a manutenibilidade e a segurança para futuras alterações.
 \end{itemize}
 

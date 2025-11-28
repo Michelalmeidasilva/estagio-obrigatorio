@@ -13,83 +13,12 @@ O desenvolvimento foi separado entre duas implementações: a Implementação A 
 
 \subsubsection{Implementação A - Arquitetura Legada}
 
-A implementação abaixo utiliza a arquitetura legada, empregando o módulo NativeModules. Na camada JS da aplicação, a comunicação com o módulo nativo é estabelecida por meio da importação de NativeModules do pacote react-native.
+A implementação utiliza a arquitetura legada, empregando o módulo `NativeModules`. Na camada JS da aplicação, a comunicação com o módulo nativo é estabelecida por meio da importação de `NativeModules` do pacote `react-native`. O código completo desta implementação pode ser consultado na Listagem \ref{lst:legacy-js} do Apêndice \ref{apendice:migracao}.
 
+No Código Nativo (Android - Java), foi realizada a implementação de um método chamado `getHelloWorld` para o retorno de uma string simples e um método `getName` para o retorno do nome do módulo nativo, conforme detalhado na Listagem \ref{lst:legacy-java} do Apêndice \ref{apendice:migracao}.
 
-\begin{lstlisting}[language=JavaScript, caption={App.js (Lado JS)}]
-import React from 'react';
-import { Button, View, NativeModules } from 'react-native';
-const { HelloWorldModule } = NativeModules;
+Para a plataforma iOS (Objective-C), de forma análoga ao código em Java, a implementação foi realizada conforme detalhado na Listagem \ref{lst:legacy-objc} do Apêndice \ref{apendice:migracao}.
 
-const App = () => {
-  const handlePressLegacy = async () => {
-      const saudacao = await HelloWorldModule.getHelloWorld();
-      console.log(saudacao); // Imprime "Olá mundo (Legado via Bridge)"
-  };
-
-  return (
-    <View style={{ flex: 1, justifyContent: "center" }}>
-      <Button title="Testar Bridge Legada" onPress={handlePressLegacy}/>
-    </View>
-  );
-};
-
-export default App;
-\end{lstlisting}
-
-No Código Nativo (Android - Java) foi realizada a implementação de um método chamado getHelloWorld para o retorno de uma string simples e um método getName para o retorno do nome do módulo nativo, sendo implementada da seguinte maneira:
-
-
-\begin{lstlisting}[language=Java, caption={HelloWorldModule.java}]
-package com.meuapp; // HelloWorldModule.java
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.Promise;
-
-public class HelloWorldModule extends ReactContextBaseJavaModule {
-    public HelloWorldModule(ReactApplicationContext context) {
-        super(context);
-    }
-
-    @Override
-    public String getName() {
-        return "HelloWorldModule"; // Nome usado no JS
-    }
-
-    @ReactMethod // Metodo exposto para o JS
-    public void getHelloWorld(Promise promise) {
-        promise.resolve("Ola mundo (Legado via Bridge)"); 
-    }
-}
-\end{lstlisting}
-
-
-\newpage
-No código nativo (iOS - Objective-C), análogo ao código em Java, a implementação foi realizada através de:
-
-\begin{lstlisting}[language=C++, caption={HelloWorldModule (Objective-C)}]
-#import <React/RCTBridgeModule.h> // HelloWorldModule.h
-// O modulo deve implementar o protocolo <RCTBridgeModule>
-@interface HelloWorldModule : NSObject <RCTBridgeModule>
-@end
-
-#import "HelloWorldModule.h"
-@implementation HelloWorldModule
-// Expoe o modulo para o JS com o nome "HelloWorldModule"
-RCT_EXPORT_MODULE(HelloWorldModule);
-// Expoe o metodo getHelloWorld para o JS
-RCT_EXPORT_METHOD(getHelloWorld: (RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject)  {
-    NSString *saudacao = @"Ola mundo (Legado via Bridge)";
-    if (saudacao) {
-        resolve(saudacao);
-    } else {
-        reject(@"error", @"Nao foi possível gerar a saudação", nil);
-    }
-}
-@end
-\end{lstlisting}
 
 \subsubsection{Funcionamento da Bridge:}
 \begin{itemize}
@@ -103,132 +32,23 @@ RCT_EXPORT_METHOD(getHelloWorld: (RCTPromiseResolveBlock)resolve
 \subsubsection{Implementação B - Nova arquitetura}
 No exemplo de implementação do logMessage com TurboModule, a migração demandou um arquivo de especificação (Spec) em TypeScript para definição da API, o qual serviu de base para geração do código boilerplate nativo.
 
-\textbf{Definição da Interface de API (Spec - TypeScript)}: Um arquivo de especificação define o contrato da API de forma explícita na camada JS, da seguinte maneira:
-
-\begin{lstlisting}[language=TypeScript, caption={NativeHelloWorld.ts (Spec)}]
-// /js/NativeHelloWorld.ts (A "Spec")
-import type { TurboModule } from 'react-native/Libraries/TurboModule/TurboModule';
-import { TurboModuleRegistry } from 'react-native';
-// 1. Definimos a interface
-export interface Spec extends TurboModule {
-// 2. Definimos um método SÍNCRONO
-  getHelloWorld(): string; 
-}
-// 3. Registramos o módulo (o nome 'RTNHelloWorld' é o nome oficial do componente)
-export default TurboModuleRegistry.getEnforcing<Spec>(
-  'RTNHelloWorld',
-);
-\end{lstlisting}
+\textbf{Definição da Interface de API (Spec - TypeScript)}: Um arquivo de especificação define o contrato da API de forma explícita na camada JS, conforme apresentado na Listagem \ref{lst:new-arch-spec} do Apêndice \ref{apendice:migracao}.
 
 
-
-\newpage
 \textbf{Implementação Nativa (Android - Kotlin)}
 
-Na implementação nativa, foi utilizada uma interface gerada que permitiu o acesso direto ao runtime JS.
-
-\begin{lstlisting}[language=Java, caption={RTNHelloWorldModule.java}]
-package com.meuapp; //RTNHelloWorldModule.java
-
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import androidx.annotation.NonNull;
-
-// 1. O Codegen gera 'NativeHelloWorldSpec'
-import com.facebook.fbreact.specs.NativeHelloWorldSpec; 
-
-public class RTNHelloWorldModule extends NativeHelloWorldSpec {
-  public static final String NAME = "RTNHelloWorld";
-  public RTNHelloWorldModule(ReactApplicationContext context) {
-        super(context);
-    }
-
-  @Override
-  @NonNull
-  public String getName() {
-    return NAME;
-  }
-
-  @Override
-  public String getHelloWorld() {
-    return "Ola mundo (Nova Arquitetura via JSI)";
- }
-}
-\end{lstlisting}
+Na implementação nativa, foi utilizada uma interface gerada que permitiu o acesso direto ao runtime JS, como pode ser visto na Listagem \ref{lst:new-arch-java} do Apêndice \ref{apendice:migracao}.
 
 
-
-\newpage
 \textbf{Código em JS}
 
-A interface de uso no JS conservou estrutura similar, mas passou a acessar diretamente o módulo C++ por meio da JSI.
-
-\begin{lstlisting}[language=JavaScript, caption={App.js (Lado JS com Nova Arquitetura)}]
-// App.js (Lado JS)
-import React from 'react';
-import { Button, View } from 'react-native';
-
-// 1. Importa diretamente o módulo (conforme a Spec)
-import RTNHelloWorld from './js/NativeHelloWorld'; 
-
-const App = () => {
-
-  const handlePressNewArch = () => {
-    const saudacao = RTNHelloWorld.getHelloWorld();
-    // Imprime "Ola mundo (Nova Arquitetura via JSI)"
-    console.log(saudacao); 
-  };
-
-  return (
-    <View style={{ flex: 1, justifyContent: 'center' }}>
-      <Button title="Testar Nova Arquitetura" onPress={handlePressNewArch} />
-    </View>
-  );
-};
-
-export default App;
-\end{lstlisting}
+A interface de uso no JS conservou estrutura similar, mas passou a acessar diretamente o módulo C++ por meio da JSI (ver Listagem \ref{lst:new-arch-js} no Apêndice \ref{apendice:migracao}).
 
 
-
-\newpage
 \textbf{Implementação Nativa (iOS - Objective-C)}
 
-Para a plataforma iOS, implementou-se o código nativo em Objective-C.
+Para a plataforma iOS, implementou-se o código nativo em Objective-C, conforme demonstrado na Listagem \ref{lst:new-arch-objc} do Apêndice \ref{apendice:migracao}.
 
-\begin{lstlisting}[language=C++, caption={RTNHelloWorld (Objective-C)}]
-// RTNHelloWorld.h
-// 1. Importa a Spec gerada pelo Codegen (baseada no seu .ts)
-#import <RTNHelloWorld/RTNHelloWorldSpec.h> 
-
-// 2. O nome da classe deve corresponder ao que o JS espera (RTNHelloWorld)
-// 3. A classe implementa o protocolo da Spec gerada
-@interface RTNHelloWorld : NSObject <NativeHelloWorldSpec> 
-@end
-
-// RTNHelloWorld.mm
-#import "RTNHelloWorld.h"
-
-@implementation RTNHelloWorld
-
-// 1. Exporta o módulo (o nome é o da classe)
-RCT_EXPORT_MODULE(RTNHelloWorld)
-
-// 2. Esta é a implementação SÍNCRONA da Spec
-- (NSString *)getHelloWorld
-{
-    // O retorno é direto, sem Promises, sem Bridge
-    return @"Olá mundo (Nova Arquitetura via JSI)";
-}
-
-/*
-   NOTA: O Codegen e o template de TurboModule cuidam de
-   todo o "encanamento" C++ (JSI) para que este método
-   possa ser chamado diretamente pelo JS.
-*/
-
-@end
-\end{lstlisting}
 
 \subsection{Execução do módulo em um projeto de demonstração}
 Esta etapa foi a aplicação direta da estratégia de mitigação de risco para contornar o build de 40 minutos do projeto principal.
@@ -355,7 +175,6 @@ A estrutura da tela inicial padrão (App.tsx) foi completamente refatorada, migr
 \end{itemize}
 
 
-\newpage
 \subsubsection{Ferramenta de Upgrade}
 Para a gestão de dependências neste upgrade, foi utilizado a ferramenta @rnx-kit/align-deps da Microsoft, que automatiza o alinhamento de versões de pacotes compatíveis com a versão específica do React Native. O comando utilizado foi:
 
@@ -425,86 +244,3 @@ O build aprovado em ambiente de homologação foi promovido ao ambiente de Stagi
 
 \subsection{Deploy para ambiente produtivo}
 Dada a natureza da mudança (atualização de segurança e correção de breaking changes), o deploy foi tratado com monitoramento intensivo. Foi utilizado um Staged Rollout (lançamento em fases) via Play Store e App Store. A versão foi liberada inicialmente para 1\% dos usuários, com acompanhamento em tempo real das ferramentas de relatório de falhas (Crashlytics). Após a confirmação da estabilidade (ausência de novas falhas nativas relacionadas ao Google SDK), a distribuição foi escalonada para 100\%.
-
-\section{Desenvolvimento de um MVP de um Sistema Web (Período: início em 16/10, tarefa ainda em andamento)}
-
-\subsection{Detalhamento da Execução}
-O MVP foi construído e finalizado ao longo das atividades previstas na disciplina.
-
-\subsection{Design e Implementação do API Gateway e do Contrato de Comunicação Inter-serviços}
-A simples criação de endpoints individuais em cada micro serviço levaria a um acoplamento forte com o front-end e a uma complexidade de gerenciamento. Aplicando os princípios de Design de Software, foi implementada uma API Gateway para desacoplamento entre regras de negócios da aplicação.
-
-Para demonstrar a aplicação técnica, a solução foi implementada utilizando Node.js com o framework Express, devido à sua leveza e eficiência em operações de I/O.
-
-\subsubsection{Contrato OpenAPI como Fonte da Verdade}
-O primeiro passo foi definir o contrato para o endpoint público no Gateway. Foi utilizada a especificação OpenAPI (Swagger) para documentar o formato de resposta esperado pelo front-end.
-
-
-\newpage
-\textbf{Exemplo de Caso de Uso:} Obter detalhes de um Produto, que exige dados do Serviço de Produtos e do Serviço de Avaliações.
-
-\begin{lstlisting}[language=yaml, caption={Trecho da Especificação OpenAPI (Gateway Público)}]
-# Trecho da Especificação OpenAPI (Gateway Público)
-paths:
-  /v1/produtos/{id}:
-    get:
-      summary: Retorna detalhes de um produto com suas avaliações
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  produtoId: { type: integer }
-                  nome: { type: string }
-                  preco: { type: number }
-                  # Propriedade agregada:
-                  mediaAvaliacoes: { type: number, description: "Média calculada pelo Gateway" }
-                  totalAvaliacoes: { type: integer }
-\end{lstlisting}
-
-
-
-\subsubsection{Orquestração e Agregação no Código do Gateway}
-O código do endpoint no Gateway demonstra a orquestração paralela dos serviços internos.
-
-\newpage
-\begin{lstlisting}[language=JavaScript, caption={Exemplo de código no API Gateway}]
-const express = require('express');
-const axios = require('axios');
-const router = express.Router();
-
-const URL_PRODUTOS = 'http://servico-produtos:3001/api';
-const URL_AVALIACOES = 'http://servico-avaliacoes:3002/api';
-
-router.get('/v1/produtos/:id', async (req, res) => {
-    const produtoId = req.params.id;
-    const [produtoResponse, avaliacoesResponse] = await Promise.all([
-        axios.get(`${URL_PRODUTOS}/produtos/${produtoId}`),
-        axios.get(`${URL_AVALIACOES}/avaliacoes/produto/${produtoId}`)
-    ]);
-
-    const produto = produtoResponse.data;
-    const avaliacoes = avaliacoesResponse.data;
-    const media = avaliacoes.length 
-                  ? avaliacoes.reduce((soma, a) => soma + a.nota, 0) / avaliacoes.length 
-                  : 0;
-
-    const respostaGateway = { produtoId: produto.id, nome: produto.nome, preco: produto.valor, mediaAvaliacoes: parseFloat(media.toFixed(1)), totalAvaliacoes: avaliacoes.length
-    };
-
-    return res.status(200).json(respostaGateway);
-});
-module.exports = router;
-\end{lstlisting}
-
-\subsection{Publicação de nova versão}
-A publicação da nova versão foi concluída.
-As seguintes etapas foram executadas:
-\begin{enumerate}
-    \item Publicação de uma versão
-    \item Testes em ambiente de homologação
-    \item Testes em ambientes pré-produtivos
-    \item Deploy para ambiente produtivo
-\end{enumerate}
